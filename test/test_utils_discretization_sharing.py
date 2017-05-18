@@ -13,8 +13,8 @@ class TestDiscrete(TestCase):
         expected = [1, 2, 2, 3, 1, 3, 4, 5, 1, 3, 4, 5, 5, 5]
         self.assertSequenceEqual(result,expected)
     def test_with_corret_positive_n(self):
-        result = list(discrete(self.x,9))
-        expected = [1, 3, 3, 5, 2, 5, 7, 8, 2, 5, 7, 8, 9, 9]
+        result = list(discrete(self.x,5))
+        expected = [1, 2, 2, 3, 1, 3, 4, 5, 1, 3, 4, 5, 5, 5]
         self.assertSequenceEqual(result,expected)
     def test_with_corret_negative_n(self):
         result = list(discrete(self.x,-9))
@@ -29,5 +29,5 @@ class TestDiscrete(TestCase):
             discrete(self.x,"a")
     def test_with_str_array(self):
         result = list(discrete(self.y,0))
-        expected = self.y
+        expected = list(self.y)
         self.assertSequenceEqual(result,expected)
