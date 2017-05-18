@@ -8,7 +8,7 @@ def discrete(x: np.ndarray,n:int=5)->np.ndarray:
     '''
     计算出每位数据所处的百分位数区间位置,默认分为5段,段数从1开始计数,数值越大越接近100%
     '''
-    if isinstance(n,int):
+    if not isinstance(n,int):
         raise AttributeError("n must be a int")
     if n<=0 or isinstance(x[0],np.str_):
         return x
