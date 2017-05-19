@@ -63,20 +63,20 @@ class TestCommand(Command):
 setup(
     name='score_card_model',
     version='0.0.1',
-    description='A sample Python project',
+    description='A sample Python project for score card model',
     long_description=long_description,
 
     # 项目地址
-    url='https://github.com/pypa/sampleproject',
+    url='https://github.com/data-science-tools/ScoreCardModel',
 
     # 作者信息
-    author='The Python Packaging Authority',
-    author_email='pypa-dev@googlegroups.com',
+    author='hsz',
+    author_email='hsz1273327@gmail.com',
     # 维护者信息
-    maintainer = "",
-    maintainer_email = "",
+    #maintainer = "",
+    #maintainer_email = "",
     # 指定可用的平台,一般有c扩展的可能会用到
-    platforms = ["any"],
+    #platforms = ["any"],
 
     # 许可证信息
     license='MIT',
@@ -92,22 +92,17 @@ setup(
         # 开发的目标用户
         'Intended Audience :: Developers',
         # 属于什么类型
-        'Topic :: Software Development :: Build Tools',
+        'Topic :: Software Development :: Math model',
 
         # 许可证信息
         'License :: OSI Approved :: MIT License',
 
         # 目标python版本
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
 
     # 关键字
-    keywords='sample setuptools development',
+    keywords='math finance model statistics machine_learning',
 
     # 指定用到的模块,find_packages会找到同文件夹下的模块,用`exclude`指定排除的模块
     packages=packages,
@@ -121,8 +116,8 @@ setup(
     # for example:
     # pip install -e .[dev,test]
     extras_require={
-        'dev': ['check-manifest'],
-        'test': ['coverage'],
+        #'dev': ['check-manifest'],
+        'test': ['coverage']
     },
     # 指定可执行脚本,如果安装,脚本会被放到默认安装路径
     #scripts=["scripts/test.py"],
