@@ -34,7 +34,7 @@ class CoverageCommand(Command):
             raise Exception("Parameter --output is missing")
     def run(self):
         assert os.getcwd() == self.cwd, 'Must be in package root: {self.cwd}'.format(self=self)
-        command = ['/usr/bin/env', 'python', '-m', 'coverage']
+        command = ['python', '-m', 'coverage']
         if self.output:
             command.append('{self.output}'.format(self=self))
         else:
@@ -53,7 +53,7 @@ class TestCommand(Command):
         self.cwd = os.getcwd()
     def run(self):
         assert os.getcwd() == self.cwd, 'Must be in package root: {self.cwd}'.format(self=self)
-        command = ['/usr/bin/env', 'python', '-m',
+        command = ['python', '-m',
         'coverage','run' ,'--source=score_card_model',
         '-m', 'unittest', 'discover', '-v', '-s', 'test']
         self.announce('Running command: {command}'.format(command = str(command)),
@@ -120,10 +120,10 @@ setup(
     # 额外环境的依赖,一般不单独用文件指出
     # for example:
     # pip install -e .[dev,test]
-    # extras_require={
-    #     'dev': ['check-manifest'],
-    #     'test': ['coverage'],
-    # },
+    extras_require={
+        'dev': ['check-manifest'],
+        'test': ['coverage'],
+    },
     # 指定可执行脚本,如果安装,脚本会被放到默认安装路径
     #scripts=["scripts/test.py"],
 
