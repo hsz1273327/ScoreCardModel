@@ -36,7 +36,8 @@ class CoverageCommand(Command):
         assert os.getcwd() == self.cwd, 'Must be in package root: {self.cwd}'.format(self=self)
         command = ['python', '-m', 'coverage']
         if self.output:
-            command.append('{self.output}'.format(self=self))
+            cm = '{self.output}'.format(self=self)
+            command.append(cm)
         else:
             command.append('report')
         self.announce('Running command: {command}'.format(command = str(command)),

@@ -1,6 +1,8 @@
-__all__= ['count_binary']
+__all__ = ['count_binary']
 
 from score_card_model.utils.check import check_array_binary
+
+
 def count_binary(a, event=1):
     if not check_array_binary(a):
         raise AttributeError("array must be a binary array")

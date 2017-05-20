@@ -1,122 +1,186 @@
 import numpy as np
-from typing import Any,Union,Sequence, Tuple, Dict
-
-from score_card_model.utils.check import check_array_binary
+from collections import OrderedDict
+from typing import Any, Union, Sequence, Tuple, Dict, Callable, List
+from score_card_model.utils.discretization.sharing import discrete
+from score_card_model.utils.check import check_array_binary, check_array_continuous
 from score_card_model.utils.count import count_binary
+
+
 class Woe:
-    def __call__(self, X:np.ndarray,
-            y:np.ndarray,
-            event:Any=1,N:Union[int,Sequence[int]]=5)->Tuple[np.ndarray,np.ndarray]:
-        return self.run(X=X,y=y,event=event,N=N)
+    """
+    注意woe和iv方法如果有discrete参数,必须是tuple(func,dict)或者list(tuple(func,dict))
+    """
+    WOE_MIN = -20
+    WOE_MAX = 20
 
-    def __init__(self):
-        self._WOE_MIN = -20
-        self._WOE_MAX = 20
+    @staticmethod
+    def _posibility(x: np.ndarray, tag: np.ndarray, event: Any=1, discrete: Callable = None, **kwargs)->Dict[any, Tuple[float, float]]:
+        """
+        计算占总体的好坏占比
+        """
+        if discrete:
+            x = discrete(x, **kwargs)
+        if not check_array_binary(tag):
+            raise AttributeError("tag must be a binary array")
+        if check_array_continuous(x):
+            raise AttributeError("input array must not continuous")
+        event_total, non_event_total = count_binary(tag, event=event)
+        x_labels = np.unique(x)
+        pos_dic = {}
+        for x1 in x_labels:
+            y1 = tag[np.where(x == x1)[0]]
+            event_count, non_event_count = count_binary(y1, event=event)
+            rate_event = 1.0 * event_count / event_total
+            rate_non_event = 1.0 * non_event_count / non_event_total
+            pos_dic[x1] = (rate_event, rate_non_event)
+        return pos_dic
 
-    def run(self, X:np.ndarray,
-            y:np.ndarray,
-            event:Any=1,N:Union[int,Sequence[int]]=5)->Tuple[np.ndarray,np.ndarray]:
+    @staticmethod
+    def weight_of_evidence(x: np.ndarray, tag: np.ndarray, event: Any=1, woe_min=-20, woe_max=20, discrete: Callable = None, **kwargs)->Dict[any, float]:
         '''
-        Calculate woe of each feature category and information value
-        :param X: 2-D numpy array explanatory features which should be discreted already
-        :param y: 1-D numpy array target variable which should be binary
-        :param event: value of binary stands for the event to predict
-        :return: numpy array of woe dictionaries, each dictionary contains woe values for categories of each feature
-                 numpy array of information value of each feature
+        对单独一项自变量(列,特征)计算其woe和iv值.
+        woe计算公式:
+        :math: `woe_i = log(\frac {\frac {Bad_i} {Bad_{total}}} {\frac {Good_i} {Good_{total}}})`
         '''
-        self.check_target_binary(y)
-        X1 = self.feature_discretion(X)
+        woe_dict = {}
+        pos_dic = Woe._posibility(x=x, tag=tag, event=event, discrete=discrete, **kwargs)
+        for l, (rate_event, rate_non_event) in pos_dic.items():
+            if rate_event == 0:
+                woe1 = woe_min
+            elif rate_non_event == 0:
+                woe1 = woe_max
+            else:
+                woe1 = np.log(rate_event / rate_non_event)  # np.log就是ln
+            woe_dict[l] = woe1
+        return woe_dict
 
-        res_woe = []
-        res_iv = []
-        for i in range(0, X1.shape[-1]):
-            x = X1[:, i]
-            woe_dict, iv1 = self.woe_single_x(x, y, event)
-            res_woe.append(woe_dict)
-            res_iv.append(iv1)
-        return np.array(res_woe), np.array(res_iv)
+    @staticmethod
+    def information_value(x: np.ndarray, tag: np.ndarray, event: Any=1, woe_min=-20, woe_max=20, discrete: Callable = None, **kwargs)->float:
+        iv = 0
+        pos_dic = Woe._posibility(x=x, tag=tag, event=event, discrete=discrete, **kwargs)
+        for l, (rate_event, rate_non_event) in pos_dic.items():
+            if rate_event == 0:
+                woe1 = woe_min
+            elif rate_non_event == 0:
+                woe1 = woe_max
+            else:
+                woe1 = np.log(rate_event / rate_non_event)
+            iv += (rate_event - rate_non_event) * woe1
+        return iv
 
-    def _woe_single_x(self, x:np.ndarray, tag:np.ndarray, event:Any=1)->Tuple[Dict[int,float],float]:
+    def __call__(self, X: np.ndarray, tag: np.ndarray, event: Any=1, label=None,
+                 discrete: Union[None, Tuple[Callable, Dict], Sequence[Tuple[Callable, Dict]]] = None)->Dict[Any, Dict[Any, float]]:
+        if label:
+            len(label) != X.shape[-1]
+            raise AttributeError("label must have the same len with the features' number")
+        result = {}
+        if discrete:
+            if isinstance(discrete, tuple):
+                discrete = [discrete for i in range(X.shape[-1])]
+            if not label:
+                for i in range(X.shape[-1]):
+                    func, kws = discrete[i]
+                    result[str(i)] = {'woe': self.woe_single_x(X[:, i], tag, event, discrete=func, **kws),
+                                      'iv': self.iv_single_x(X[:, i], tag, event, discrete=func, **kws)
+                                      }
+            else:
+                for i in range(X.shape[-1]):
+                    func, kws = discrete[i]
+                    result[label[i]] = {'woe': self.woe_single_x(X[:, i], tag, event, discrete=func, **kws),
+                                        'iv': self.iv_single_x(X[:, i], tag, event, discrete=func, **kws)
+                                        }
+        else:
+            if not label:
+                for i in range(X.shape[-1]):
+                    result[str(i)] = {'woe': self.woe_single_x(X[:, i], tag, event),
+                                      'iv': self.iv_single_x(X[:, i], tag, event)
+                                      }
+            else:
+                for i in range(X.shape[-1]):
+                    result[label[i]] = {'woe': self.woe_single_x(X[:, i], tag, event),
+                                        'iv': self.iv_single_x(X[:, i], tag, event)
+                                        }
+
+        result = OrderedDict(sorted(result.items(), key=lambda t: t[1]["iv"], reverse=True))
+        return result
+
+    def __init__(self, min_v=-20, max_v=20):
+        self.WOE_MIN = min_v
+        self.WOE_MAX = max_v
+
+    def woe_single_x(self, x: np.ndarray, tag: np.ndarray, event: Any=1, discrete: Callable = None, **kwargs)->Dict[Any, float]:
         '''
         对单独一项自变量(列,特征)计算其woe和iv值.
         woe计算公式:
 
         :math: `woe_i = log(\frac {\frac {Bad_i} {Bad_{total}}} {\frac {Good_i} {Good_{total}}})`
-
-
-        :param x: 1-D numpy starnds for single feature
-        :param y: 1-D numpy array target variable
-        :param event: value of binary stands for the event to predict
-        :return: dictionary contains woe values for categories of this feature
-                 information value of this feature
         '''
-        if not check_array_binary(tag):
-            raise AttributeError("tag must be a binary array")
+        woe_dict = Woe.weight_of_evidence(x, tag, event,
+                                          woe_min=self.WOE_MIN, woe_max=self.WOE_MAX, discrete=discrete, **kwargs)
 
-        event_total, non_event_total = count_binary(y, event=event)
-        x_labels = np.unique(x)
-        woe_dict = {}
-        iv = 0
-        for x1 in x_labels:
-            y1 = y[np.where(x == x1)[0]]
-            event_count, non_event_count = count_binary(y1, event=event)
-            rate_event = 1.0 * event_count / event_total
-            rate_non_event = 1.0 * non_event_count / non_event_total
-            if rate_event == 0:
-                woe1 = self._WOE_MIN
-            elif rate_non_event == 0:
-                woe1 = self._WOE_MAX
+        return woe_dict
+
+    def iv_single_x(self, x: np.ndarray, tag: np.ndarray, event: Any=1,
+                    discrete: Callable = None, **kwargs)->float:
+        iv = Woe.information_value(x, tag, event, woe_min=self.WOE_MIN,
+                                   woe_max=self.WOE_MAX, discrete=discrete, **kwargs)
+        return iv
+
+    def woe(self, X: np.ndarray, tag: np.ndarray, event: Any=1, label=None,
+            discrete: Union[None, Tuple[Callable, Dict], List[Tuple[Callable, Dict]]] = None)->Dict[Any, Dict[Any, float]]:
+        if label:
+            len(label) != X.shape[-1]
+            raise AttributeError("label must have the same len with the features' number")
+
+        result = {}
+        if discrete:
+            if isinstance(discrete, tuple):
+                discrete = [discrete for i in range(X.shape[-1])]
+            if not label:
+                for i in range(X.shape[-1]):
+                    print(discrete[i])
+                    func, kws = discrete[i]
+                    result[str(i)] = self.woe_single_x(X[:, i], tag, event, discrete=func, **kws)
             else:
-                woe1 = math.log(rate_event / rate_non_event)
-            woe_dict[x1] = woe1
-            iv += (rate_event - rate_non_event) * woe1
-        return woe_dict, iv
+                for i in range(X.shape[-1]):
+                    print(discrete[i])
+                    func, kws = discrete[i]
+                    result[label[i]] = self.woe_single_x(X[:, i], tag, event, discrete=func, **kws)
 
-    def woe_replace(self, X, woe_arr):
-        '''
-        replace the explanatory feature categories with its woe value
-        :param X: 2-D numpy array explanatory features which should be discreted already
-        :param woe_arr: numpy array of woe dictionaries, each dictionary contains woe values for categories of each feature
-        :return: the new numpy array in which woe values filled
-        '''
-        if X.shape[-1] != woe_arr.shape[-1]:
-            raise ValueError('WOE dict array length must be equal with features length')
+        else:
+            if not label:
+                for i in range(X.shape[-1]):
+                    result[str(i)] = self.woe_single_x(X[:, i], tag, event)
+            else:
+                for i in range(X.shape[-1]):
+                    result[label[i]] = self.woe_single_x(X[:, i], tag, event)
+        return result
 
-        res = np.copy(X).astype(float)
-        idx = 0
-        for woe_dict in woe_arr:
-            for k in woe_dict.keys():
-                woe = woe_dict[k]
-                res[:, idx][np.where(res[:, idx] == k)[0]] = woe * 1.0
-            idx += 1
-
-        return res
-
-    def combined_iv(self, X, y, masks, event=1):
-        '''
-        calcute the information vlaue of combination features
-        :param X: 2-D numpy array explanatory features which should be discreted already
-        :param y: 1-D numpy array target variable
-        :param masks: 1-D numpy array of masks stands for which features are included in combination,
-                      e.g. np.array([0,0,1,1,1,0,0,0,0,0,1]), the length should be same as features length
-        :param event: value of binary stands for the event to predict
-        :return: woe dictionary and information value of combined features
-        '''
-        if masks.shape[-1] != X.shape[-1]:
-            raise ValueError('Masks array length must be equal with features length')
-
-        x = X[:, np.where(masks == 1)[0]]
-        tmp = []
-        for i in range(x.shape[0]):
-            tmp.append(self.combine(x[i, :]))
-
-        dumy = np.array(tmp)
-        # dumy_labels = np.unique(dumy)
-        woe, iv = self.woe_single_x(dumy, y, event)
-        return woe, iv
-
-    def combine(self, list):
-        res = ''
-        for item in list:
-            res += str(item)
-        return res
+    def iv(self, X: np.ndarray, tag: np.ndarray, event: Any=1, label=None,
+           discrete: Union[None, Tuple[Callable, Dict], List[Tuple[Callable, Dict]]] = None)->Dict[Any, float]:
+        if label:
+            len(label) != X.shape[-1]
+            raise AttributeError("label must have the same len with the features' number")
+        result = {}
+        if discrete:
+            if isinstance(discrete, tuple):
+                discrete = [discrete for i in range(X.shape[-1])]
+            if not label:
+                for i in range(X.shape[-1]):
+                    print(discrete[i])
+                    func, kws = discrete[i]
+                    result[str(i)] = self.iv_single_x(X[:, i], tag, event, discrete=func, **kws)
+            else:
+                for i in range(X.shape[-1]):
+                    print(discrete[i])
+                    func, kws = discrete[i]
+                    result[label[i]] = self.iv_single_x(discrete(X[:, i]), tag, event, discrete=func, **kws)
+        else:
+            if not label:
+                for i in range(X.shape[-1]):
+                    result[str(i)] = self.iv_single_x(X[:, i], tag, event)
+            else:
+                for i in range(X.shape[-1]):
+                    result[label[i]] = self.iv_single_x(X[:, i], tag, event)
+        result = OrderedDict(sorted(result.items(), key=lambda t: t[1], reverse=True))
+        return result
