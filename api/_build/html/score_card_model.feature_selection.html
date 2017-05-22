@@ -1,0 +1,434 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>score_card_model.feature_selection package &#8212; score_card_model  documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="score_card_model.forecast package" href="score_card_model.forecast.html" />
+    <link rel="prev" title="score_card_model package" href="score_card_model.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="score-card-model-feature-selection-package">
+<h1>score_card_model.feature_selection package<a class="headerlink" href="#score-card-model-feature-selection-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-score_card_model.feature_selection.distribution">
+<span id="score-card-model-feature-selection-distribution-module"></span><h2>score_card_model.feature_selection.distribution module<a class="headerlink" href="#module-score_card_model.feature_selection.distribution" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="score_card_model.feature_selection.distribution.Distribution">
+<em class="property">class </em><code class="descclassname">score_card_model.feature_selection.distribution.</code><code class="descname">Distribution</code><span class="sig-paren">(</span><em>x: numpy.ndarray</em>, <em>segment: int = 100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/score_card_model/feature_selection/distribution.html#Distribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.distribution.Distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="docutils">
+<dt>Property:</dt>
+<dd>x (np.ndarray): - 输入的数组
+X (np.ndarray): - 数组分段的下表
+Y (np.ndarray): - 数组中的元素每个分段中的出现的个数
+xticks (np.ndarray): - 均分的分段信息
+segment (int): - 均分的分段数</dd>
+</dl>
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.distribution.Distribution.X">
+<code class="descname">X</code><a class="headerlink" href="#score_card_model.feature_selection.distribution.Distribution.X" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.distribution.Distribution.Y">
+<code class="descname">Y</code><a class="headerlink" href="#score_card_model.feature_selection.distribution.Distribution.Y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="score_card_model.feature_selection.distribution.Distribution.calcul_distribution">
+<code class="descname">calcul_distribution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/score_card_model/feature_selection/distribution.html#Distribution.calcul_distribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.distribution.Distribution.calcul_distribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="score_card_model.feature_selection.distribution.Distribution.calculate">
+<em class="property">static </em><code class="descname">calculate</code><span class="sig-paren">(</span><em>x: numpy.ndarray</em>, <em>segment: int = 5</em><span class="sig-paren">)</span> &rarr; typing.Tuple[numpy.ndarray, numpy.ndarray]<a class="reference internal" href="_modules/score_card_model/feature_selection/distribution.html#Distribution.calculate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.distribution.Distribution.calculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>计算分布</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd>x (np.ndarray): - 复杂的多层序列
+segment (int): -  均分的分段数,默认100</dd>
+<dt>Returns:</dt>
+<dd>Tuple[np.ndarray, np.ndarray]: - 返回用于画图的X,Y</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="score_card_model.feature_selection.distribution.Distribution.draw">
+<code class="descname">draw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/score_card_model/feature_selection/distribution.html#Distribution.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.distribution.Distribution.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>画出分布情况</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.distribution.Distribution.segment">
+<code class="descname">segment</code><a class="headerlink" href="#score_card_model.feature_selection.distribution.Distribution.segment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.distribution.Distribution.x">
+<code class="descname">x</code><a class="headerlink" href="#score_card_model.feature_selection.distribution.Distribution.x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.distribution.Distribution.xticks">
+<code class="descname">xticks</code><a class="headerlink" href="#score_card_model.feature_selection.distribution.Distribution.xticks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-score_card_model.feature_selection.weight_of_evidence">
+<span id="score-card-model-feature-selection-weight-of-evidence-module"></span><h2>score_card_model.feature_selection.weight_of_evidence module<a class="headerlink" href="#module-score_card_model.feature_selection.weight_of_evidence" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="score_card_model.feature_selection.weight_of_evidence.Woe">
+<em class="property">class </em><code class="descclassname">score_card_model.feature_selection.weight_of_evidence.</code><code class="descname">Woe</code><span class="sig-paren">(</span><em>X: numpy.ndarray, tag: numpy.ndarray, event: typing.Any = 1, label: typing.Union[NoneType, typing.List[str]] = None, discrete: typing.Union[NoneType, typing.Tuple[typing.Callable, typing.Dict], typing.List[typing.Tuple[typing.Callable, typing.Dict]]] = None, min_v=-20, max_v=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/score_card_model/feature_selection/weight_of_evidence.html#Woe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.weight_of_evidence.Woe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>注意woe和iv方法如果有discrete参数,必须是tuple(func,dict)或者list(tuple(func,dict)).</p>
+<p>使用的时候先实例化,然后使用`iv`或者`woe`或者调用`__call__`来获取其对应的值.</p>
+<dl class="docutils">
+<dt>Property:</dt>
+<dd>WOE_MIN (number): - WOE的最小值,如果rate_event为0就将它替换为woe_min
+WOE_MAX (number): - WOE的最大值,如果ratenon_event为0就将它替换为woe_max
+X (np.ndarray): - 输入的2-D矩阵
+tag (np.ndarray): - 输入的1-D数组,布尔标签数据
+event (Any): - 为True的标签
+label (Union[None, List[str]]): - 各项特征的名字列表
+discrete (Union[None, Tuple[Callable, Dict], List[Tuple[Callable, Dict]]]): - 处理各项特征分区间的tuple(func,args)数据</dd>
+</dl>
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.weight_of_evidence.Woe.WOE_MAX">
+<code class="descname">WOE_MAX</code><a class="headerlink" href="#score_card_model.feature_selection.weight_of_evidence.Woe.WOE_MAX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.weight_of_evidence.Woe.WOE_MIN">
+<code class="descname">WOE_MIN</code><a class="headerlink" href="#score_card_model.feature_selection.weight_of_evidence.Woe.WOE_MIN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.weight_of_evidence.Woe.X">
+<code class="descname">X</code><a class="headerlink" href="#score_card_model.feature_selection.weight_of_evidence.Woe.X" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.weight_of_evidence.Woe.discrete">
+<code class="descname">discrete</code><a class="headerlink" href="#score_card_model.feature_selection.weight_of_evidence.Woe.discrete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.weight_of_evidence.Woe.event">
+<code class="descname">event</code><a class="headerlink" href="#score_card_model.feature_selection.weight_of_evidence.Woe.event" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="score_card_model.feature_selection.weight_of_evidence.Woe.information_value">
+<em class="property">static </em><code class="descname">information_value</code><span class="sig-paren">(</span><em>x: numpy.ndarray</em>, <em>tag: numpy.ndarray</em>, <em>event: typing.Any = 1</em>, <em>woe_min=-20</em>, <em>woe_max=20</em>, <em>discrete: typing.Callable = None</em>, <em>**kwargs</em><span class="sig-paren">)</span> &rarr; float<a class="reference internal" href="_modules/score_card_model/feature_selection/weight_of_evidence.html#Woe.information_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.weight_of_evidence.Woe.information_value" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>对单独一项自变量(列,特征)计算其woe和iv值.
+iv计算公式:
+$$ IV_i=({</div></blockquote>
+<p>rac {Bad_i}{Bad_{total}}}-{
+rac{Good_i}{Good_{total}}})*log(
+rac{
+rac{Bad_i}{Bad_{total}}}{
+rac{Good_i}{Good_{total}}}) $$</p>
+<blockquote>
+<div>$$ IV = sum_{k=0}^n IV_i $$</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.weight_of_evidence.Woe.iv">
+<code class="descname">iv</code><a class="headerlink" href="#score_card_model.feature_selection.weight_of_evidence.Woe.iv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.weight_of_evidence.Woe.label">
+<code class="descname">label</code><a class="headerlink" href="#score_card_model.feature_selection.weight_of_evidence.Woe.label" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.weight_of_evidence.Woe.tag">
+<code class="descname">tag</code><a class="headerlink" href="#score_card_model.feature_selection.weight_of_evidence.Woe.tag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="score_card_model.feature_selection.weight_of_evidence.Woe.weight_of_evidence">
+<em class="property">static </em><code class="descname">weight_of_evidence</code><span class="sig-paren">(</span><em>x: numpy.ndarray</em>, <em>tag: numpy.ndarray</em>, <em>event: typing.Any = 1</em>, <em>woe_min=-20</em>, <em>woe_max=20</em>, <em>discrete: typing.Callable = None</em>, <em>**kwargs</em><span class="sig-paren">)</span> &rarr; typing.Dict[&lt;built-in function any&gt;, float]<a class="reference internal" href="_modules/score_card_model/feature_selection/weight_of_evidence.html#Woe.weight_of_evidence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.weight_of_evidence.Woe.weight_of_evidence" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>对单独一项自变量(列,特征)计算其woe值.
+woe计算公式:
+$$ woe_i = log(</div></blockquote>
+<p>rac {
+rac {Bad_i} {Bad_{total}}} {
+rac {Good_i} {Good_{total}}}) $$</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.weight_of_evidence.Woe.woe">
+<code class="descname">woe</code><a class="headerlink" href="#score_card_model.feature_selection.weight_of_evidence.Woe.woe" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-score_card_model.feature_selection">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-score_card_model.feature_selection" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="score_card_model.feature_selection.Distribution">
+<em class="property">class </em><code class="descclassname">score_card_model.feature_selection.</code><code class="descname">Distribution</code><span class="sig-paren">(</span><em>x: numpy.ndarray</em>, <em>segment: int = 100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/score_card_model/feature_selection/distribution.html#Distribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.Distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="docutils">
+<dt>Property:</dt>
+<dd>x (np.ndarray): - 输入的数组
+X (np.ndarray): - 数组分段的下表
+Y (np.ndarray): - 数组中的元素每个分段中的出现的个数
+xticks (np.ndarray): - 均分的分段信息
+segment (int): - 均分的分段数</dd>
+</dl>
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Distribution.X">
+<code class="descname">X</code><a class="headerlink" href="#score_card_model.feature_selection.Distribution.X" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Distribution.Y">
+<code class="descname">Y</code><a class="headerlink" href="#score_card_model.feature_selection.Distribution.Y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="score_card_model.feature_selection.Distribution.calcul_distribution">
+<code class="descname">calcul_distribution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/score_card_model/feature_selection/distribution.html#Distribution.calcul_distribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.Distribution.calcul_distribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="score_card_model.feature_selection.Distribution.calculate">
+<em class="property">static </em><code class="descname">calculate</code><span class="sig-paren">(</span><em>x: numpy.ndarray</em>, <em>segment: int = 5</em><span class="sig-paren">)</span> &rarr; typing.Tuple[numpy.ndarray, numpy.ndarray]<a class="reference internal" href="_modules/score_card_model/feature_selection/distribution.html#Distribution.calculate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.Distribution.calculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>计算分布</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd>x (np.ndarray): - 复杂的多层序列
+segment (int): -  均分的分段数,默认100</dd>
+<dt>Returns:</dt>
+<dd>Tuple[np.ndarray, np.ndarray]: - 返回用于画图的X,Y</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="score_card_model.feature_selection.Distribution.draw">
+<code class="descname">draw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/score_card_model/feature_selection/distribution.html#Distribution.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.Distribution.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>画出分布情况</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Distribution.segment">
+<code class="descname">segment</code><a class="headerlink" href="#score_card_model.feature_selection.Distribution.segment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Distribution.x">
+<code class="descname">x</code><a class="headerlink" href="#score_card_model.feature_selection.Distribution.x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Distribution.xticks">
+<code class="descname">xticks</code><a class="headerlink" href="#score_card_model.feature_selection.Distribution.xticks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="score_card_model.feature_selection.Woe">
+<em class="property">class </em><code class="descclassname">score_card_model.feature_selection.</code><code class="descname">Woe</code><span class="sig-paren">(</span><em>X: numpy.ndarray, tag: numpy.ndarray, event: typing.Any = 1, label: typing.Union[NoneType, typing.List[str]] = None, discrete: typing.Union[NoneType, typing.Tuple[typing.Callable, typing.Dict], typing.List[typing.Tuple[typing.Callable, typing.Dict]]] = None, min_v=-20, max_v=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/score_card_model/feature_selection/weight_of_evidence.html#Woe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.Woe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>注意woe和iv方法如果有discrete参数,必须是tuple(func,dict)或者list(tuple(func,dict)).</p>
+<p>使用的时候先实例化,然后使用`iv`或者`woe`或者调用`__call__`来获取其对应的值.</p>
+<dl class="docutils">
+<dt>Property:</dt>
+<dd>WOE_MIN (number): - WOE的最小值,如果rate_event为0就将它替换为woe_min
+WOE_MAX (number): - WOE的最大值,如果ratenon_event为0就将它替换为woe_max
+X (np.ndarray): - 输入的2-D矩阵
+tag (np.ndarray): - 输入的1-D数组,布尔标签数据
+event (Any): - 为True的标签
+label (Union[None, List[str]]): - 各项特征的名字列表
+discrete (Union[None, Tuple[Callable, Dict], List[Tuple[Callable, Dict]]]): - 处理各项特征分区间的tuple(func,args)数据</dd>
+</dl>
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Woe.WOE_MAX">
+<code class="descname">WOE_MAX</code><a class="headerlink" href="#score_card_model.feature_selection.Woe.WOE_MAX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Woe.WOE_MIN">
+<code class="descname">WOE_MIN</code><a class="headerlink" href="#score_card_model.feature_selection.Woe.WOE_MIN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Woe.X">
+<code class="descname">X</code><a class="headerlink" href="#score_card_model.feature_selection.Woe.X" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Woe.discrete">
+<code class="descname">discrete</code><a class="headerlink" href="#score_card_model.feature_selection.Woe.discrete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Woe.event">
+<code class="descname">event</code><a class="headerlink" href="#score_card_model.feature_selection.Woe.event" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="score_card_model.feature_selection.Woe.information_value">
+<em class="property">static </em><code class="descname">information_value</code><span class="sig-paren">(</span><em>x: numpy.ndarray</em>, <em>tag: numpy.ndarray</em>, <em>event: typing.Any = 1</em>, <em>woe_min=-20</em>, <em>woe_max=20</em>, <em>discrete: typing.Callable = None</em>, <em>**kwargs</em><span class="sig-paren">)</span> &rarr; float<a class="reference internal" href="_modules/score_card_model/feature_selection/weight_of_evidence.html#Woe.information_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.Woe.information_value" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>对单独一项自变量(列,特征)计算其woe和iv值.
+iv计算公式:
+$$ IV_i=({</div></blockquote>
+<p>rac {Bad_i}{Bad_{total}}}-{
+rac{Good_i}{Good_{total}}})*log(
+rac{
+rac{Bad_i}{Bad_{total}}}{
+rac{Good_i}{Good_{total}}}) $$</p>
+<blockquote>
+<div>$$ IV = sum_{k=0}^n IV_i $$</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Woe.iv">
+<code class="descname">iv</code><a class="headerlink" href="#score_card_model.feature_selection.Woe.iv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Woe.label">
+<code class="descname">label</code><a class="headerlink" href="#score_card_model.feature_selection.Woe.label" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Woe.tag">
+<code class="descname">tag</code><a class="headerlink" href="#score_card_model.feature_selection.Woe.tag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="score_card_model.feature_selection.Woe.weight_of_evidence">
+<em class="property">static </em><code class="descname">weight_of_evidence</code><span class="sig-paren">(</span><em>x: numpy.ndarray</em>, <em>tag: numpy.ndarray</em>, <em>event: typing.Any = 1</em>, <em>woe_min=-20</em>, <em>woe_max=20</em>, <em>discrete: typing.Callable = None</em>, <em>**kwargs</em><span class="sig-paren">)</span> &rarr; typing.Dict[&lt;built-in function any&gt;, float]<a class="reference internal" href="_modules/score_card_model/feature_selection/weight_of_evidence.html#Woe.weight_of_evidence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#score_card_model.feature_selection.Woe.weight_of_evidence" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>对单独一项自变量(列,特征)计算其woe值.
+woe计算公式:
+$$ woe_i = log(</div></blockquote>
+<p>rac {
+rac {Bad_i} {Bad_{total}}} {
+rac {Good_i} {Good_{total}}}) $$</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="score_card_model.feature_selection.Woe.woe">
+<code class="descname">woe</code><a class="headerlink" href="#score_card_model.feature_selection.Woe.woe" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">score_card_model.feature_selection package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-score_card_model.feature_selection.distribution">score_card_model.feature_selection.distribution module</a></li>
+<li><a class="reference internal" href="#module-score_card_model.feature_selection.weight_of_evidence">score_card_model.feature_selection.weight_of_evidence module</a></li>
+<li><a class="reference internal" href="#module-score_card_model.feature_selection">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="score_card_model.html">score_card_model package</a><ul>
+      <li>Previous: <a href="score_card_model.html" title="previous chapter">score_card_model package</a></li>
+      <li>Next: <a href="score_card_model.forecast.html" title="next chapter">score_card_model.forecast package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/score_card_model.feature_selection.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/score_card_model.feature_selection.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

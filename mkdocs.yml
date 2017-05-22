@@ -1,7 +1,0 @@
-site_name: My Docs
-markdown_extensions: ['extra', 'mdx_math']
-extra_javascript: ['https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML']
-pages:
-  - Home: index.md
-  - API: api.autodoc
-theme: readthedocs
