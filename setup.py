@@ -1,138 +1,271 @@
-# 一般用setuptools
-from setuptools import setup, find_packages,Command
-# 维持不同平台文件相同的编码
-from codecs import open
-import distutils
-from os import path
+
 import os
+import sys
+import copy
+import platform
+import distutils
 import subprocess
+from os import path
+from codecs import open
+from setuptools import setup, find_packages, Command
 
+if sys.version_info[0] != 3:
+    raise OSError("only for python 3.5+")
+if sys.version_info[0] == 3 and sys.version_info[1] < 5:
+    raise OSError("only for python 3.5+")
 
-here = path.abspath(path.dirname(__file__))
+from pathlib import Path
 
+REQUIREMETS_DEV_FILE = 'requirements_dev.txt'
+REQUIREMETS_TEST_FILE = 'requirements_test.txt'
+REQUIREMETS_FILE = 'requirements.txt'
+PROJECTNAME = 'score_card_model'
+VERSION = '0.0.1'
+DESCRIPTION = 'A sample Python project for score card model'
+URL = 'https://github.com/data-science-tools/ScoreCardModel'
+AUTHOR = 'hsz'
+AUTHOR_EMAIL = 'hsz1273327@gmail.com'
+LICENSE = 'MIT'
+CLASSIFIERS = [
+    'Development Status :: 3 - Alpha',
+    'Intended Audience :: Developers',
+    'Topic :: Software Development :: Math model',
+    'License :: OSI Approved :: MIT License',
+    'Programming Language :: Python :: 3.6',
+]
+KEYWORDS = 'math finance model statistics machine_learning'
+PACKAGES = find_packages(exclude=['contrib', 'docs', 'test'])
+ZIP_SAFE = False
 # 用同文件夹下的README.rst文件定义长介绍
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
+HERE = path.abspath(path.dirname(__file__))
+with open(path.join(HERE, 'README.rst'), encoding='utf-8') as f:
+    LONG_DESCRIPTION = f.read()
 
 # 用同文件夹下的requirements.txt文件定义运行依赖
-with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
+with open(path.join(HERE, REQUIREMETS_FILE), encoding='utf-8') as f:
     REQUIREMETS = f.readlines()
 
-packages=find_packages(exclude=['contrib', 'docs', 'test'])
+with open(path.join(HERE, REQUIREMETS_DEV_FILE), encoding='utf-8') as f:
+    REQUIREMETS_DEV = f.readlines()
+
+with open(path.join(HERE, REQUIREMETS_TEST_FILE), encoding='utf-8') as f:
+    REQUIREMETS_TEST = f.readlines()
+
+
+def get_command():
+    if platform.system() == 'Windows':
+        PYTHON = 'python'
+        p = Path(".\env")
+        if p.exists():
+            COMMAND = ['env\Scripts\python']
+        else:
+            COMMAND = [PYTHON]
+    else:
+        PYTHON = 'python3'
+        p = Path("./env")
+        if p.exists():
+            COMMAND = ['env/bin/python']
+        else:
+            COMMAND = [PYTHON]
+    return PYTHON, COMMAND
+
+
+class DocCommand(Command):
+    description = "文档工具"
+    user_options = [
+        ("runcommand=", "r", "文档操作")
+    ]
+
+    def initialize_options(self):
+        self.cwd = None
+        self.runcommand = "serve"
+
+    def finalize_options(self):
+        self.cwd = os.getcwd()
+        if self.runcommand == None:
+            self.runcommand = "serve"
+        else:
+            if self.runcommand not in ('serve','build','gitpage'):
+                raise AttributeError("runcommand 的参数必须在 'serve','build','gitpage' 之中")
+
+
+    def run(self):
+        assert os.getcwd() == self.cwd, 'Must be in package root: {self.cwd}'.format(self=self)
+        _, COMMAND = get_command()
+
+        if self.runcommand == 'build':
+            command = copy.copy(COMMAND)
+            command += ['-m', 'mkdocs', 'build']
+            self.announce('Running command: {command}'.format(command=str(command)),
+                          level=distutils.log.INFO)
+            subprocess.check_call(command)
+            return 0
+
+        elif self.runcommand == 'gitpage':
+            command = copy.copy(COMMAND)
+            command += ['-m', 'mkdocs', 'gh-deploy']
+            self.announce('Running command: {command}'.format(command=str(command)),
+                          level=distutils.log.INFO)
+            subprocess.check_call(command)
+            return 0
+        else:
+            command = copy.copy(COMMAND)
+            command += ['-m', 'mkdocs', 'serve']
+            self.announce('Running command: {command}'.format(command=str(command)),
+                          level=distutils.log.INFO)
+            subprocess.check_call(command)
+            return 0
+
+
+
+        ("serve=", "s", "启动文档的静态服务器"),
+        ('gh_deploy=',"g","放到gitpage")
+
+
+class InitCommand(Command):
+    description = "初始化项目"
+    user_options = [('globa=', 'g', "使用全局环境")]
+
+    def initialize_options(self):
+        self.globa = None
+        self.cwd = None
+
+    def finalize_options(self):
+        self.cwd = os.getcwd()
+
+    def run(self):
+        assert os.getcwd() == self.cwd, 'Must be in package root: {self.cwd}'.format(self=self)
+        if not self.globa:
+            PYTHON, _ = get_command()
+            command = [PYTHON, '-m', 'venv', 'env']
+            self.announce('Running command: {command}'.format(command=str(command)),
+                          level=distutils.log.INFO)
+            subprocess.check_call(command)
+        _, COMMAND = get_command()
+        command = copy.copy(COMMAND)
+        command += ['-m', 'pip', 'install', '-r', REQUIREMETS_FILE]
+        self.announce('Running command: {command}'.format(command=str(command)),
+                      level=distutils.log.INFO)
+        subprocess.check_call(command)
+
+        command = copy.copy(COMMAND)
+        command += ['-m', 'pip', 'install', '-r', REQUIREMETS_TEST_FILE]
+        self.announce('Running command: {command}'.format(command=str(command)),
+                      level=distutils.log.INFO)
+        subprocess.check_call(command)
+
+        command = copy.copy(COMMAND)
+        command += ['-m', 'pip', 'install', '-r', REQUIREMETS_DEV_FILE]
+        self.announce('Running command: {command}'.format(command=str(command)),
+                      level=distutils.log.INFO)
+        subprocess.check_call(command)
+
+        command = copy.copy(COMMAND)
+        command += ['-m', 'mkdocs', 'new', '.']
+        self.announce('Running command: {command}'.format(command=str(command)),
+                      level=distutils.log.INFO)
+        subprocess.check_call(command)
+#         with open(path.join(HERE, 'docs/mathjaxhelper.js'), 'w', encoding='utf-8') as f:
+#             f.write('''MathJax.Hub.Config({
+# "tex2jax": { inlineMath: [ [ '$', '$' ] ] }
+# });
+# MathJax.Hub.Config({
+# config: ["MMLorHTML.js"],
+# jax: ["input/TeX", "output/HTML-CSS", "output/NativeMML"],
+# extensions: ["MathMenu.js", "MathZoom.js"]
+# });''')
+        with open(path.join(HERE, 'mkdocs.yml'), 'w' ,encoding='utf-8') as f:
+            f.write("""site_name: My Docs
+markdown_extensions: ['extra', 'mdx_math']
+extra_javascript: ['https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML']
+pages:
+  - Home: index.md
+  - API: api.autodoc
+theme: readthedocs
+""")
+        with open(path.join(HERE, 'docs/api.autodoc'), "w", encoding='utf-8') as f:
+            for i in PACKAGES:
+                f.write(i)
+                f.write("\n")
+
+
 
 class CoverageCommand(Command):
     description = "覆盖率"
     user_options = [
-    ("output=","o","选择报告的输出方式")
+        ("output=", "o", "选择报告的输出方式")
     ]
+
     def initialize_options(self):
         self.cwd = None
         self.output = ''
+
     def finalize_options(self):
         self.cwd = os.getcwd()
-        if self.output and self.output not in ("report","html"):
+        if self.output and self.output not in ("report", "html"):
             raise Exception("Parameter --output is missing")
+
     def run(self):
         assert os.getcwd() == self.cwd, 'Must be in package root: {self.cwd}'.format(self=self)
-        command = ['python', '-m', 'coverage']
+        _, COMMAND = get_command()
+        command = copy.copy(COMMAND)
+        command += ['-m', 'coverage']
         if self.output:
             cm = '{self.output}'.format(self=self)
             command.append(cm)
         else:
             command.append('report')
-        self.announce('Running command: {command}'.format(command = str(command)),
-            level=distutils.log.INFO)
+        self.announce('Running command: {command}'.format(command=str(command)),
+                      level=distutils.log.INFO)
         subprocess.check_call(command)
 
 
 class TestCommand(Command):
     description = "测试"
     user_options = []
+
     def initialize_options(self):
         self.cwd = None
+
     def finalize_options(self):
         self.cwd = os.getcwd()
+
     def run(self):
         assert os.getcwd() == self.cwd, 'Must be in package root: {self.cwd}'.format(self=self)
-        command = ['python', '-m',
-        'coverage','run' ,'--source=score_card_model',
-        '-m', 'unittest', 'discover', '-v', '-s', 'test']
-        self.announce('Running command: {command}'.format(command = str(command)),
-            level=distutils.log.INFO)
+        _, COMMAND = get_command()
+        command = copy.copy(COMMAND)
+        command += ['-m',
+                   'coverage', 'run', '--source=score_card_model',
+                   '-m', 'unittest', 'discover', '-v', '-s', 'test']
+        self.announce('Running command: {command}'.format(command=str(command)),
+                      level=distutils.log.INFO)
         subprocess.check_call(command)
 
+
 setup(
-    name='score_card_model',
-    version='0.0.1',
-    description='A sample Python project for score card model',
-    long_description=long_description,
-
-    # 项目地址
-    url='https://github.com/data-science-tools/ScoreCardModel',
-
-    # 作者信息
-    author='hsz',
-    author_email='hsz1273327@gmail.com',
-    # 维护者信息
-    #maintainer = "",
-    #maintainer_email = "",
-    # 指定可用的平台,一般有c扩展的可能会用到
-    #platforms = ["any"],
-
-    # 许可证信息
-    license='MIT',
-
-    # 分类信息,具体看 https://pypi.python.org/pypi?%3Aaction=list_classifiers
-    classifiers=[
-        # 发展时期,常见的如下
-        #   3 - Alpha
-        #   4 - Beta
-        #   5 - Production/Stable
-        'Development Status :: 3 - Alpha',
-
-        # 开发的目标用户
-        'Intended Audience :: Developers',
-        # 属于什么类型
-        'Topic :: Software Development :: Math model',
-
-        # 许可证信息
-        'License :: OSI Approved :: MIT License',
-
-        # 目标python版本
-        'Programming Language :: Python :: 3.6',
-    ],
-
-    # 关键字
-    keywords='math finance model statistics machine_learning',
-
-    # 指定用到的模块,find_packages会找到同文件夹下的模块,用`exclude`指定排除的模块
-    packages=packages,
-
-    # 运行时使用的依赖
+    name=PROJECTNAME,
+    version=VERSION,
+    description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
+    url=URL,
+    author=AUTHOR,
+    author_email=AUTHOR_EMAIL,
+    license=LICENSE,
+    classifiers=CLASSIFIERS,
+    keywords=KEYWORDS,
+    packages=PACKAGES,
     install_requires=REQUIREMETS,
-    # 是否支持直接引用zip文件,这是setuptools的特有功能
-    zip_safe=False,
-
-    # 额外环境的依赖,一般不单独用文件指出
-    # for example:
-    # pip install -e .[dev,test]
     extras_require={
-        #'dev': ['check-manifest'],
-        'test': ['coverage']
+        #'dev': REQUIREMETS_DEV,
+        'test': REQUIREMETS_TEST
     },
-    # 指定可执行脚本,如果安装,脚本会被放到默认安装路径
-    #scripts=["scripts/test.py"],
-
-    # 模块如果有自带的数据文件,可以用package_data指定
-    #package_data={
-    #    'sample': ['package_data.dat'],
-    #},
-
-    # 指定模块自带数据所在的文件夹
-    data_files=[('./', ['requirements.txt'])],
+    zip_safe=ZIP_SAFE,
+    data_files=[('./', ['requirements.txt', 'requirements_dev.txt', 'requirements_test.txt'])],
     # 定义自定义命令
-    cmdclass = {
-        'coverage':CoverageCommand,
-        'test':TestCommand
+    cmdclass={
+        'init': InitCommand,
+        'doc': DocCommand,
+        'coverage': CoverageCommand,
+        'test': TestCommand
     }
 )
