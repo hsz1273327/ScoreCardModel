@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="cn">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>score_card_model.feature_selection.weight_of_evidence &#8212; score_card_model  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for score_card_model.feature_selection.weight_of_evidence</h1><div class="highlight"><pre>
+<span></span><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Woe&quot;</span><span class="p">]</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">score_card_model.utils.discretization.sharing</span> <span class="k">import</span> <span class="n">discrete</span>
+<span class="kn">from</span> <span class="nn">score_card_model.utils.check</span> <span class="k">import</span> <span class="n">check_array_binary</span><span class="p">,</span> <span class="n">check_array_continuous</span>
+<span class="kn">from</span> <span class="nn">score_card_model.utils.count</span> <span class="k">import</span> <span class="n">count_binary</span>
+
+
+<div class="viewcode-block" id="Woe"><a class="viewcode-back" href="../../../score_card_model.feature_selection.html#score_card_model.feature_selection.weight_of_evidence.Woe">[docs]</a><span class="k">class</span> <span class="nc">Woe</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    注意woe和iv方法如果有discrete参数,必须是tuple(func,dict)或者list(tuple(func,dict)).</span>
+
+<span class="sd">    使用的时候先实例化,然后使用`iv`或者`woe`或者调用`__call__`来获取其对应的值.</span>
+
+<span class="sd">    Property:</span>
+<span class="sd">        WOE_MIN (number): - WOE的最小值,如果rate_event为0就将它替换为woe_min</span>
+<span class="sd">        WOE_MAX (number): - WOE的最大值,如果ratenon_event为0就将它替换为woe_max</span>
+<span class="sd">        X (np.ndarray): - 输入的2-D矩阵</span>
+<span class="sd">        tag (np.ndarray): - 输入的1-D数组,布尔标签数据</span>
+<span class="sd">        event (Any): - 为True的标签</span>
+<span class="sd">        label (Union[None, List[str]]): - 各项特征的名字列表</span>
+<span class="sd">        discrete (Union[None, Tuple[Callable, Dict], List[Tuple[Callable, Dict]]]): - 处理各项特征分区间的tuple(func,args)数据</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_posibility</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Any</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">discrete</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Dict</span><span class="p">[</span><span class="nb">any</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        计算占总体的好坏占比</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">discrete</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">discrete</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_array_binary</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;tag must be a binary array&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">check_array_continuous</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;input array must not continuous&quot;</span><span class="p">)</span>
+        <span class="n">event_total</span><span class="p">,</span> <span class="n">non_event_total</span> <span class="o">=</span> <span class="n">count_binary</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="n">event</span><span class="p">)</span>
+        <span class="n">x_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">pos_dic</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">x1</span> <span class="ow">in</span> <span class="n">x_labels</span><span class="p">:</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="n">tag</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">x1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">event_count</span><span class="p">,</span> <span class="n">non_event_count</span> <span class="o">=</span> <span class="n">count_binary</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="n">event</span><span class="p">)</span>
+            <span class="n">rate_event</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">event_count</span> <span class="o">/</span> <span class="n">event_total</span>
+            <span class="n">rate_non_event</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">non_event_count</span> <span class="o">/</span> <span class="n">non_event_total</span>
+            <span class="n">pos_dic</span><span class="p">[</span><span class="n">x1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">rate_event</span><span class="p">,</span> <span class="n">rate_non_event</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pos_dic</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Woe.weight_of_evidence"><a class="viewcode-back" href="../../../score_card_model.feature_selection.html#score_card_model.feature_selection.weight_of_evidence.Woe.weight_of_evidence">[docs]</a>    <span class="k">def</span> <span class="nf">weight_of_evidence</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Any</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">woe_min</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="n">woe_max</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">discrete</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Dict</span><span class="p">[</span><span class="nb">any</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;对单独一项自变量(列,特征)计算其woe值.</span>
+<span class="sd">        woe计算公式:</span>
+
+<span class="sd">        .. math:: woe_i = log(\frac {\frac {Bad_i} {Bad_{total}}} {\frac {Good_i} {Good_{total}}})</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">woe_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">pos_dic</span> <span class="o">=</span> <span class="n">Woe</span><span class="o">.</span><span class="n">_posibility</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="n">event</span><span class="p">,</span> <span class="n">discrete</span><span class="o">=</span><span class="n">discrete</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="p">(</span><span class="n">rate_event</span><span class="p">,</span> <span class="n">rate_non_event</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pos_dic</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">rate_event</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">woe1</span> <span class="o">=</span> <span class="n">woe_min</span>
+            <span class="k">elif</span> <span class="n">rate_non_event</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">woe1</span> <span class="o">=</span> <span class="n">woe_max</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">woe1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">rate_event</span> <span class="o">/</span> <span class="n">rate_non_event</span><span class="p">)</span>  <span class="c1"># np.log就是ln</span>
+            <span class="n">woe_dict</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">woe1</span>
+        <span class="k">return</span> <span class="n">woe_dict</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Woe.information_value"><a class="viewcode-back" href="../../../score_card_model.feature_selection.html#score_card_model.feature_selection.weight_of_evidence.Woe.information_value">[docs]</a>    <span class="k">def</span> <span class="nf">information_value</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Any</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">woe_min</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="n">woe_max</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">discrete</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&#39;&#39;&#39;对单独一项自变量(列,特征)计算其woe和iv值.</span>
+<span class="sd">        iv计算公式:</span>
+
+<span class="sd">        .. math:: IV_i=({\\frac {Bad_i}{Bad_{total}}}-{\\frac{Good_i}{Good_{total}}})*log(\\frac{\\frac{Bad_i}{Bad_{total}}}{\\frac{Good_i}{Good_{total}}})</span>
+
+<span class="sd">        .. math:: IV = \\sum_{k=0}^n IV_i</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">iv</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">pos_dic</span> <span class="o">=</span> <span class="n">Woe</span><span class="o">.</span><span class="n">_posibility</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="n">event</span><span class="p">,</span> <span class="n">discrete</span><span class="o">=</span><span class="n">discrete</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="p">(</span><span class="n">rate_event</span><span class="p">,</span> <span class="n">rate_non_event</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pos_dic</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">rate_event</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">woe1</span> <span class="o">=</span> <span class="n">woe_min</span>
+            <span class="k">elif</span> <span class="n">rate_non_event</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">woe1</span> <span class="o">=</span> <span class="n">woe_max</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">woe1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">rate_event</span> <span class="o">/</span> <span class="n">rate_non_event</span><span class="p">)</span>
+            <span class="n">iv</span> <span class="o">+=</span> <span class="p">(</span><span class="n">rate_event</span> <span class="o">-</span> <span class="n">rate_non_event</span><span class="p">)</span> <span class="o">*</span> <span class="n">woe1</span>
+        <span class="k">return</span> <span class="n">iv</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">WOE_MIN</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__WOE_MIN</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">WOE_MAX</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__WOE_MAX</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">X</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tag</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__event</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__label</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">discrete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__discrete</span>
+
+
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Any</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span><span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">discrete</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">min_v</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="n">max_v</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        初始化一个woe对象.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            min_v (number): - WOE的最小值,如果rate_event为0就将它替换为woe_min</span>
+<span class="sd">            max_v (number): - WOE的最大值,如果ratenon_event为0就将它替换为woe_max</span>
+<span class="sd">            X (np.ndarray): - 输入的2-D矩阵</span>
+<span class="sd">            tag (np.ndarray): - 输入的1-D数组,布尔标签数据</span>
+<span class="sd">            event (Any): - 为True的标签</span>
+<span class="sd">            label (Union[None, List[str]]): - 各项特征的名字列表</span>
+<span class="sd">            discrete (Union[None, Tuple[Callable, Dict], List[Tuple[Callable, Dict]]]): - 处理各项特征分区间的tuple(func,args)数据</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AttributeError(&quot;label must have the same len with the features&#39; number&quot;) : - label如果长度与特征数不符则报错</span>
+
+<span class="sd">            AttributeError(&quot;discrete method list must have the same len with the features&#39; number&quot;) : - discrete如果是列表,如果其长度与特征数不符则报错</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="o">!=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;label must have the same len with the features&#39; number&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">discrete</span><span class="p">,</span><span class="n">List</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">discrete</span><span class="p">)</span> <span class="o">!=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;discrete method list must have the same len with the features&#39; number&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__WOE_MIN</span> <span class="o">=</span> <span class="n">min_v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__WOE_MAX</span> <span class="o">=</span> <span class="n">max_v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__X</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__tag</span> <span class="o">=</span> <span class="n">tag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__event</span> <span class="o">=</span> <span class="n">event</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__label</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__discrete</span> <span class="o">=</span> <span class="n">discrete</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__woe</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__iv</span>  <span class="o">=</span> <span class="kc">None</span>
+
+
+
+    <span class="k">def</span> <span class="nf">__calcul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">func</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;用于计算iv或者woe</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">discrete</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discrete</span>
+        <span class="k">if</span> <span class="n">discrete</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">discrete</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">discrete</span> <span class="o">=</span> <span class="p">[</span><span class="n">discrete</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">discrete</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">discretefunc</span> <span class="o">=</span> <span class="n">discrete</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">result</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">woe_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">WOE_MIN</span><span class="p">,</span> <span class="n">woe_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">WOE_MAX</span><span class="p">,</span><span class="n">discrete</span><span class="o">=</span><span class="n">discretefunc</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">discrete</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="n">discretefunc</span><span class="p">,</span> <span class="n">kws</span> <span class="o">=</span> <span class="n">discrete</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="n">result</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">woe_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">WOE_MIN</span><span class="p">,</span> <span class="n">woe_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">WOE_MAX</span><span class="p">,</span><span class="n">discrete</span><span class="o">=</span><span class="n">discretefunc</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;discrete argument must a tuple of the objects :func,args&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">discrete</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">discretefunc</span> <span class="o">=</span> <span class="n">discrete</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="n">result</span><span class="p">[</span><span class="n">label</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">woe_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">WOE_MIN</span><span class="p">,</span> <span class="n">woe_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">WOE_MAX</span><span class="p">,</span><span class="n">discrete</span><span class="o">=</span><span class="n">discretefunc</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">discrete</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="n">discretefunc</span><span class="p">,</span> <span class="n">kws</span> <span class="o">=</span> <span class="n">discrete</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="n">result</span><span class="p">[</span><span class="n">label</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">woe_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">WOE_MIN</span><span class="p">,</span> <span class="n">woe_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">WOE_MAX</span><span class="p">,</span><span class="n">discrete</span><span class="o">=</span><span class="n">discretefunc</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;discrete argument must a tuple of the objects :func[,args]&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="n">result</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span><span class="n">woe_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">WOE_MIN</span><span class="p">,</span> <span class="n">woe_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">WOE_MAX</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="n">result</span><span class="p">[</span><span class="n">label</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span><span class="n">woe_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">WOE_MIN</span><span class="p">,</span> <span class="n">woe_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">WOE_MAX</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">iv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__iv</span> <span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__iv</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__calcul</span><span class="p">(</span><span class="n">Woe</span><span class="o">.</span><span class="n">information_value</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__iv</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">woe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__woe</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__woe</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__calcul</span><span class="p">(</span><span class="n">Woe</span><span class="o">.</span><span class="n">weight_of_evidence</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__woe</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+
+        <span class="n">iv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iv</span>
+        <span class="n">woe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">woe</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">l</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">iv</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;iv&quot;</span><span class="p">:</span><span class="n">iv</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">l</span><span class="p">),</span>
+                      <span class="s2">&quot;woe&quot;</span><span class="p">:</span><span class="n">woe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+                      <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;iv&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Hsz.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

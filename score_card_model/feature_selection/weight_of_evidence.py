@@ -47,10 +47,10 @@ class Woe:
 
     @staticmethod
     def weight_of_evidence(x: np.ndarray, tag: np.ndarray, event: Any=1, woe_min=-20, woe_max=20, discrete: Callable = None, **kwargs)->Dict[any, float]:
-        '''
-        对单独一项自变量(列,特征)计算其woe值.
+        r'''对单独一项自变量(列,特征)计算其woe值.
         woe计算公式:
-        $$ woe_i = log(\frac {\frac {Bad_i} {Bad_{total}}} {\frac {Good_i} {Good_{total}}}) $$
+
+        .. math:: woe_i = log(\frac {\frac {Bad_i} {Bad_{total}}} {\frac {Good_i} {Good_{total}}})
         '''
         woe_dict = {}
         pos_dic = Woe._posibility(x=x, tag=tag, event=event, discrete=discrete, **kwargs)
@@ -66,12 +66,12 @@ class Woe:
 
     @staticmethod
     def information_value(x: np.ndarray, tag: np.ndarray, event: Any=1, woe_min=-20, woe_max=20, discrete: Callable = None, **kwargs)->float:
-        '''
-        对单独一项自变量(列,特征)计算其woe和iv值.
+        '''对单独一项自变量(列,特征)计算其woe和iv值.
         iv计算公式:
-        $$ IV_i=({\frac {Bad_i}{Bad_{total}}}-{\frac{Good_i}{Good_{total}}})*log(\frac{\frac{Bad_i}{Bad_{total}}}{\frac{Good_i}{Good_{total}}}) $$
 
-        $$ IV = \sum_{k=0}^n IV_i $$
+        .. math:: IV_i=({\\frac {Bad_i}{Bad_{total}}}-{\\frac{Good_i}{Good_{total}}})*log(\\frac{\\frac{Bad_i}{Bad_{total}}}{\\frac{Good_i}{Good_{total}}})
+
+        .. math:: IV = \\sum_{k=0}^n IV_i
         '''
 
         iv = 0
