@@ -142,8 +142,6 @@ setup(
     data_files=[('./', ['requirements.txt', 'requirements_dev.txt', 'requirements_test.txt'])],
     # 定义自定义命令
     cmdclass={
-        'init': InitCommand,
-        'doc': DocCommand,
         'coverage': CoverageCommand,
         'test': TestCommand
     }

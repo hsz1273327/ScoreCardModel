@@ -2,7 +2,7 @@ __all__ = ["Woe"]
 import numpy as np
 from collections import OrderedDict
 from typing import Any, Union, Sequence, Tuple, Dict, Callable, List
-from score_card_model.utils.discretization.sharing import discrete
+from score_card_model.utils.discretization.sharing import discrete, discrete_features
 from score_card_model.utils.check import check_array_binary, check_array_continuous
 from score_card_model.utils.count import count_binary
 
@@ -22,14 +22,16 @@ class Woe:
         label (Union[None, List[str]]): - 各项特征的名字列表
         discrete (Union[None, Tuple[Callable, Dict], List[Tuple[Callable, Dict]]]): - 处理各项特征分区间的tuple(func,args)数据
     """
-
     @staticmethod
-    def _posibility(x: np.ndarray, tag: np.ndarray, event: Any=1, discrete: Callable = None, **kwargs)->Dict[any, Tuple[float, float]]:
+    def _x_result_line(x,discrete: Callable = None, **kwargs):
+        if discrete:
+            x = discrete(x, **kwargs)
+        return x
+    @staticmethod
+    def _posibility(x: np.ndarray, tag: np.ndarray, event: Any=1)->Dict[any, Tuple[float, float]]:
         """
         计算占总体的好坏占比
         """
-        if discrete:
-            x = discrete(x, **kwargs)
         if not check_array_binary(tag):
             raise AttributeError("tag must be a binary array")
         if check_array_continuous(x):
@@ -46,14 +48,14 @@ class Woe:
         return pos_dic
 
     @staticmethod
-    def weight_of_evidence(x: np.ndarray, tag: np.ndarray, event: Any=1, woe_min=-20, woe_max=20, discrete: Callable = None, **kwargs)->Dict[any, float]:
+    def weight_of_evidence(x: np.ndarray, tag: np.ndarray, event: Any=1, woe_min=-20, woe_max=20)->Dict[any, float]:
         r'''对单独一项自变量(列,特征)计算其woe值.
         woe计算公式:
 
         .. math:: woe_i = log(\frac {\frac {Bad_i} {Bad_{total}}} {\frac {Good_i} {Good_{total}}})
         '''
         woe_dict = {}
-        pos_dic = Woe._posibility(x=x, tag=tag, event=event, discrete=discrete, **kwargs)
+        pos_dic = Woe._posibility(x=x, tag=tag, event=event)
         for l, (rate_event, rate_non_event) in pos_dic.items():
             if rate_event == 0:
                 woe1 = woe_min
@@ -65,7 +67,7 @@ class Woe:
         return woe_dict
 
     @staticmethod
-    def information_value(x: np.ndarray, tag: np.ndarray, event: Any=1, woe_min=-20, woe_max=20, discrete: Callable = None, **kwargs)->float:
+    def information_value(x: np.ndarray, tag: np.ndarray, event: Any=1, woe_min=-20, woe_max=20)->float:
         '''对单独一项自变量(列,特征)计算其woe和iv值.
         iv计算公式:
 
@@ -75,7 +77,7 @@ class Woe:
         '''
 
         iv = 0
-        pos_dic = Woe._posibility(x=x, tag=tag, event=event, discrete=discrete, **kwargs)
+        pos_dic= Woe._posibility(x=x, tag=tag, event=event)
         for l, (rate_event, rate_non_event) in pos_dic.items():
             if rate_event == 0:
                 woe1 = woe_min
@@ -148,6 +150,24 @@ class Woe:
         self.__discrete = discrete
         self.__woe = None
         self.__iv  = None
+        self.X_result = None
+        if self.discrete:
+            if isinstance(discrete, tuple):
+                discrete = [discrete for i in range(self.X.shape[-1])]
+            result = []
+            for i in range(self.X.shape[-1]):
+                if len(discrete[i]) == 1:
+                    discretefunc = discrete[i][0]
+                    x = Woe._x_result_line(self.X[:, i],discrete=discretefunc)
+                elif len(discrete[i]) == 2:
+                    discretefunc, kws = discrete[i]
+                    x= Woe._x_result_line(self.X[:, i],discrete=discretefunc, **kws)
+                else:
+                    raise AttributeError("discrete argument must a tuple of the objects :func,args")
+                result.append(x)
+            self.X_result = np.array(result).T
+        else:
+            self.X_result = self.X
 
 
 
@@ -155,39 +175,13 @@ class Woe:
         """用于计算iv或者woe
         """
         result = {}
-        discrete = self.discrete
-        if discrete:
-            if isinstance(discrete, tuple):
-                discrete = [discrete for i in range(self.X.shape[-1])]
-            if not self.label:
-                for i in range(self.X.shape[-1]):
-
-                    if len(discrete[i]) == 1:
-                        discretefunc = discrete[i][0]
-                        result[str(i)] = func(self.X[:, i], self.tag, self.event, woe_min=self.WOE_MIN, woe_max=self.WOE_MAX,discrete=discretefunc)
-                    elif len(discrete[i]) == 2:
-                        discretefunc, kws = discrete[i]
-                        result[str(i)] = func(self.X[:, i], self.tag, self.event, woe_min=self.WOE_MIN, woe_max=self.WOE_MAX,discrete=discretefunc, **kws)
-                    else:
-                        raise AttributeError("discrete argument must a tuple of the objects :func,args")
-            else:
-                for i in range(self.X.shape[-1]):
-
-                    if len(discrete[i]) == 1:
-                        discretefunc = discrete[i]
-                        result[label[i]] = func(self.X[:, i], self.tag, self.event, woe_min=self.WOE_MIN, woe_max=self.WOE_MAX,discrete=discretefunc)
-                    elif len(discrete[i]) == 2:
-                        discretefunc, kws = discrete[i]
-                        result[label[i]] = func(self.X[:, i], self.tag, self.event, woe_min=self.WOE_MIN, woe_max=self.WOE_MAX,discrete=discretefunc, **kws)
-                    else:
-                        raise AttributeError("discrete argument must a tuple of the objects :func[,args]")
+        if not self.label:
+            for i in range(self.X.shape[-1]):
+                result[str(i)] = func(self.X_result[:, i], self.tag, self.event,woe_min=self.WOE_MIN, woe_max=self.WOE_MAX)
         else:
-            if not self.label:
-                for i in range(self.X.shape[-1]):
-                    result[str(i)] = func(self.X[:, i], self.tag, self.event,woe_min=self.WOE_MIN, woe_max=self.WOE_MAX)
-            else:
-                for i in range(self.X.shape[-1]):
-                    result[label[i]] = func(self.X[:, i], self.tag, self.event,woe_min=self.WOE_MIN, woe_max=self.WOE_MAX)
+            for i in range(self.X.shape[-1]):
+                result[label[i]] = func(self.X_result[:, i], self.tag, self.event,woe_min=self.WOE_MIN, woe_max=self.WOE_MAX)
+
         return result
     @property
     def iv(self)->Dict[Any, float]:

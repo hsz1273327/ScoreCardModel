@@ -1,3 +1,4 @@
+from typing import Any, Union, Sequence, Tuple, Dict, Callable, List
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn import cross_validation
@@ -14,22 +15,23 @@ class ScoreCard:
         self.tag = tag
         woe = Woe(X=X, tag=tag, event=event,label=label,discrete=discrete,min_v=min_v, max_v=max_v)
         self.woe = woe.woe
+        self.X_label = woe.X_result
         woe_X = []
         if label:
             for i in range(self.X.shape[-1]):
-                array = self.X[:, i]
+                array = self.X_label[:, i]
                 woe_i = woe.get(label[i])
                 line = np.array([woe_i.get(i) for i in array])
                 woe_X.append(line)
 
         else:
             for i in range(self.X.shape[-1]):
-                array = self.X[:, i]
-                woe_i = woe.get(str(i))
+                array = self.X_label[:, i]
+                woe_i = self.woe.get(str(i))
                 line = np.array([woe_i.get(i) for i in array])
                 woe_X.append(line)
 
-        self.woe_X = np.array(woe_X)
+        self.woe_X = np.array(woe_X).T
 
     def test_fit(self,Model = LogisticRegression,times = 10,test_size=0.4, random_state=0,**kwargs):
         scores = []
@@ -51,9 +53,9 @@ class ScoreCard:
         return model
 
     def calcul_score(self,x ,model="LogisticRegression",b=100,o=1,p=20):
-        factor= p/np.log2
+        factor= p/np.log(2)
         offset=b-p*(np.log(o)/np.log(2))
-        p_f,p_t = self.models.get(model).predict_proba(X[0])
+        p_f,p_t = self.models.get(model).predict_proba(x)[0]
         odds = p_t/p_f
         return factor*np.log(odds)+offset
 
@@ -62,7 +64,7 @@ class ScoreCard:
         for i in range(self.woe_X.shape[0]):
             score = self.calcul_score(self.woe_X[i],model=model,b=b,o=o,p=p)
             class_ = self.tag[i]
-            scores_.append(score,class_)
+            scores_.append((score,class_))
         return scores_
 
     def get_ks(self,model="LogisticRegression",b=100,o=1,p=20,n=10):
@@ -73,13 +75,13 @@ class ScoreCard:
         result = []
         for i in range(n):
             limit = int((i/n)*len(scores))
-            temp = score[:limit]
+            temp = scores[:limit]
             bad =  sum([1 for score,class_ in temp if class_ == 0])
             good = len(temp)-bad
             bad_rat = bad/bad_total
             good_rat= good/good_total
             ks = abs(good_rat-bad_rat)
-            result.append(round(limit/len(scores),3),good_rat,bad_rat,ks)
+            result.append((round(limit/len(scores),3),good_rat,bad_rat,ks))
         return result
 
     def drawks(self,model="LogisticRegression",b=100,o=1,p=20,n=10):
