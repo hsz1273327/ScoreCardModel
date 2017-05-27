@@ -67,6 +67,14 @@ class ScoreCard:
             scores_.append((score,class_))
         return scores_
 
+    def get_model_info(model = "LogisticRegression"):
+        coef = self.model[model].coef_
+        params = self.model[model].get_params()
+        return {
+            'coef' = coef,
+            'params' = params
+        }
+
     def get_ks(self,model="LogisticRegression",b=100,o=1,p=20,n=10):
 
         scores = sorted(self.get_scores(model=model,b=b,o=o,p=p),reverse=True)
