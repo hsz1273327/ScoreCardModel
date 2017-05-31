@@ -45,14 +45,34 @@ class ScoreCard:
             score = model.score(X_test,y_test)
             scores.append(score)
         return np.mean(scores)
-    def fit(self,Model = LogisticRegression,**kwargs):
+    def fit(self,Model = LogisticRegression,name=None,**kwargs):
         model = Model(**kwargs)
         model.fit(self.woe_X,self.tag)
+        if name:
+            self.models[name] = model
+        else:
 
-        self.models[Model.__name__] = model
+            self.models[Model.__name__] = model
         return model
 
+    def get_score(self,orgx ,model="LogisticRegression",b=100,o=1,p=20):
+        """计算原始分好类特征数据的得分"""
+        x = []
+        if isinstance(orgx,dict):
+            for k,v in orgx.items():
+                value = self.woe.get(k).get(v)
+
+            x.append(value)
+        else:
+            for k,v in enumerate(orgx):
+                value = self.woe.get(str(k)).get(v)
+
+            x.append(value)
+        x = np.array(x)
+        return self.calcul_score(,x ,model=model,b=b,o=o,p=p)
+
     def calcul_score(self,x ,model="LogisticRegression",b=100,o=1,p=20):
+        """计算已经用woe值替代好的无标签数据的得分"""
         factor= p/np.log(2)
         offset=b-p*(np.log(o)/np.log(2))
         p_f,p_t = self.models.get(model).predict_proba(x)[0]
@@ -60,6 +80,7 @@ class ScoreCard:
         return factor*np.log(odds)+offset
 
     def get_scores(self,model="LogisticRegression",b=100,o=1,p=20):
+        """计算参数X的各条数据得分"""
         scores_ = []
         for i in range(self.woe_X.shape[0]):
             score = self.calcul_score(self.woe_X[i],model=model,b=b,o=o,p=p)
@@ -71,8 +92,8 @@ class ScoreCard:
         coef = self.model[model].coef_
         params = self.model[model].get_params()
         return {
-            'coef' = coef,
-            'params' = params
+            'coef':coef,
+            'params': params
         }
 
     def get_ks(self,model="LogisticRegression",b=100,o=1,p=20,n=10):
