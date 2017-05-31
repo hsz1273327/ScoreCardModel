@@ -17,6 +17,8 @@ class ScoreCard:
         self.woe = woe.woe
         self.X_label = woe.X_result
         woe_X = []
+        self.iv = woe.iv
+
         if label:
             for i in range(self.X.shape[-1]):
                 array = self.X_label[:, i]
@@ -75,7 +77,7 @@ class ScoreCard:
         """计算已经用woe值替代好的无标签数据的得分"""
         factor= p/np.log(2)
         offset=b-p*(np.log(o)/np.log(2))
-        p_f,p_t = self.models.get(model).predict_proba(x)[0]
+        p_f,p_t = self.models.get(model).predict_proba([x])[0]
         odds = p_t/p_f
         return factor*np.log(odds)+offset
 
@@ -119,8 +121,10 @@ class ScoreCard:
         Y_good = [i for _,i,_,_ in kss]
         Y_bad = [i for _,_,i,_ in kss]
         Y_ks = [i for _,_,_,i in kss]
-        plt.plot(X,Y_good,color="blue")
-        plt.plot(X,Y_bad,color="red")
-        plt.plot(X,Y_ks,color="yellow")
+        plt.figure(figsize=(8,5), dpi=80)#设置图片大小和dpi
+        plt.subplot(111)
+        plt.plot(X,Y_good,color="blue",label="good rat")
+        plt.plot(X,Y_bad,color="red",label="bad rat")
+        plt.plot(X,Y_ks,color="yellow",label="KS")
         plt.legend(loc='upper left')
         plt.show()
