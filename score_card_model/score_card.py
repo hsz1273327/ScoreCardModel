@@ -69,7 +69,7 @@ class ScoreCard:
 
             x.append(value)
         x = np.array(x)
-        return self.calcul_score(,x ,model=model,b=b,o=o,p=p)
+        return self.calcul_score(x ,model=model,b=b,o=o,p=p)
 
     def calcul_score(self,x ,model="LogisticRegression",b=100,o=1,p=20):
         """计算已经用woe值替代好的无标签数据的得分"""
