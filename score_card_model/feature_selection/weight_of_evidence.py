@@ -135,8 +135,8 @@ class Woe:
 
         """
         if label:
-            len(label) != X.shape[-1]
-            raise AttributeError("label must have the same len with the features' number")
+            if len(label) != X.shape[-1]:
+                raise AttributeError("label must have the same len with the features' number")
 
         if isinstance(discrete,List):
             if len(discrete) != X.shape[-1]:
