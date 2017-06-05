@@ -1,0 +1,6 @@
+
+mkl
+numpy
+scipy
+scikit-learn
+matplotlib

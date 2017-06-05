@@ -1,0 +1,18 @@
+[project]
+project_name = ScoreCardModel
+license = MIT
+keywords = ["'math'", "' finance'"]
+version = 0.0.1
+description = simple tools for credit rating.
+url = https://github.com/data-science-tools/ScoreCardModel/
+
+[author]
+author = hsz
+author_email = hsz1273327@gmail.com
+
+[form]
+form = model
+
+[env]
+env = conda
+
