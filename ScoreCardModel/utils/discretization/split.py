@@ -1,7 +1,8 @@
-from typing import List
+#coding:utf-8
+
 import numpy as np
 
-def split(x: np.ndarray, n: List)->np.ndarray:
+def split(x, n):
     '''
     计算出每位数据所处的百分位数区间位置,默认分为5段,段数从1开始计数,数值越大越接近100%
     '''

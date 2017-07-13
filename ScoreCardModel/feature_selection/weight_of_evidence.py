@@ -1,13 +1,13 @@
+#coding:utf-8
 __all__ = ["Woe"]
 import numpy as np
 from collections import OrderedDict
-from typing import Any, Union, Sequence, Tuple, Dict, Callable, List, Mapping,Optional
-from ..utils.discretization.sharing import discrete, discrete_features
-from ..utils.check import check_array_binary, check_array_continuous
-from ..utils.count import count_binary
+from score_card_model.utils.discretization.sharing import discrete, discrete_features
+from score_card_model.utils.check import check_array_binary, check_array_continuous
+from score_card_model.utils.count import count_binary
 
 
-class Woe:
+class Woe(object):
     """
     注意woe和iv方法如果有discrete参数,必须是tuple(func,dict)或者list(tuple(func,dict)).
 
@@ -23,12 +23,12 @@ class Woe:
         discrete (Union[None, Tuple[Callable, Dict], List[Tuple[Callable, Dict]]]): - 处理各项特征分区间的tuple(func,args)数据
     """
     @staticmethod
-    def _x_result_line(x,discrete: Callable = None, **kwargs):
+    def _x_result_line(x,discrete= None, **kwargs):
         if discrete:
             x = discrete(x, **kwargs)
         return x
     @staticmethod
-    def _posibility(x: np.ndarray, tag: np.ndarray, event: Any=1)->Dict[Any, Tuple[float, float]]:
+    def _posibility(x, tag, event=1):
         """
         计算占总体的好坏占比
         """
@@ -48,14 +48,13 @@ class Woe:
         return pos_dic
 
     @staticmethod
-    def weight_of_evidence(x: np.ndarray, tag: np.ndarray, event: Any=1, woe_min=-20, woe_max=20)->Dict[str,Dict[str,float]]:
+    def weight_of_evidence(x, tag, event=1, woe_min=-20, woe_max=20):
         r'''对单独一项自变量(列,特征)计算其woe值.
         woe计算公式:
 
         .. math:: woe_i = log(\frac {\frac {Bad_i} {Bad_{total}}} {\frac {Good_i} {Good_{total}}})
         '''
-
-        woe_dict:Optional[Dict[str,Dict[str,float]]] = {}
+        woe_dict = {}
         pos_dic = Woe._posibility(x=x, tag=tag, event=event)
         for l, (rate_event, rate_non_event) in pos_dic.items():
             if rate_event == 0:
@@ -68,7 +67,7 @@ class Woe:
         return woe_dict
 
     @staticmethod
-    def information_value(x: np.ndarray, tag: np.ndarray, event: Any=1, woe_min=-20, woe_max=20)->float:
+    def information_value(x, tag, event=1, woe_min=-20, woe_max=20):
         '''对单独一项自变量(列,特征)计算其woe和iv值.
         iv计算公式:
 
@@ -78,7 +77,7 @@ class Woe:
         '''
 
         iv = 0
-        pos_dic = Woe._posibility(x=x, tag=tag, event=event)
+        pos_dic= Woe._posibility(x=x, tag=tag, event=event)
         for l, (rate_event, rate_non_event) in pos_dic.items():
             if rate_event == 0:
                 woe1 = woe_min
@@ -114,9 +113,9 @@ class Woe:
 
 
 
-    def __init__(self,X: np.ndarray, tag: np.ndarray, event: Any=1, label:Union[None, List[str]]=None,
-                 discrete: Union[None, Tuple[Callable, Dict], List[Tuple[Callable, Dict]]] = None,
-                 min_v=-20, max_v=20)->None:
+    def __init__(self,X, tag, event=1, label=None,
+                 discrete = None,
+                 min_v=-20, max_v=20):
         """
         初始化一个woe对象.
 
@@ -139,7 +138,7 @@ class Woe:
             if len(label) != X.shape[-1]:
                 raise AttributeError("label must have the same len with the features' number")
 
-        if isinstance(discrete,List):
+        if isinstance(discrete,list):
             if len(discrete) != X.shape[-1]:
                 raise AttributeError("discrete method list must have the same len with the features' number")
         self.__WOE_MIN = min_v
@@ -181,11 +180,11 @@ class Woe:
                 result[str(i)] = func(self.X_result[:, i], self.tag, self.event,woe_min=self.WOE_MIN, woe_max=self.WOE_MAX)
         else:
             for i in range(self.X.shape[-1]):
-                result[label[i]] = func(self.X_result[:, i], self.tag, self.event,woe_min=self.WOE_MIN, woe_max=self.WOE_MAX)
+                result[self.label[i]] = func(self.X_result[:, i], self.tag, self.event,woe_min=self.WOE_MIN, woe_max=self.WOE_MAX)
 
         return result
     @property
-    def iv(self)->Dict[Any, float]:
+    def iv(self):
 
         if self.__iv :
             return self.__iv
@@ -196,14 +195,14 @@ class Woe:
         return result
 
     @property
-    def woe(self)->Dict[Any, Dict[Any, float]]:
+    def woe(self):
         if self.__woe:
             return self.__woe
         result = self.__calcul(Woe.weight_of_evidence)
         self.__woe = result
         return result
 
-    def __call__(self)->Mapping[Any, Dict[str,Any]]:
+    def __call__(self):
 
         iv = self.iv
         woe = self.woe

@@ -1,6 +1,6 @@
+#coding:utf-8
 __all__ = ["Distribution"]
 import numpy as np
-from typing import Tuple
 import matplotlib.pyplot as plt
 
 
@@ -14,7 +14,7 @@ class Distribution:
         segment (int): - 均分的分段数
     """
     @staticmethod
-    def calculate(x: np.ndarray, segment: int = 5)->Tuple[np.ndarray, np.ndarray]:
+    def calculate(x, segment= 5):
         """计算分布
 
 
@@ -47,11 +47,11 @@ class Distribution:
         return self.__xticks
 
     @property
-    def segment(self)->int:
+    def segment(self):
         return self.__segment
 
     @segment.setter
-    def segment(self, n: int):
+    def segment(self, n):
         if isinstance(n, int) and n > 0:
             self.__segment = n
         else:
@@ -62,7 +62,7 @@ class Distribution:
         """
         return dict(list(zip(self.xticks, self.Y)))
 
-    def __init__(self, x: np.ndarray, segment: int = 100)->None:
+    def __init__(self, x, segment = 100):
         self.__x = x
         self.segment = segment
         self.calcul_distribution()

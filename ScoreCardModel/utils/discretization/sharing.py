@@ -1,13 +1,13 @@
+#coding:utf-8
 """
 百分位数均分离散化
 """
-from typing import Union, Sequence, Tuple, List
 from collections import Sequence as seq
 import numpy as np
 from scipy import stats
 
 
-def get_sections(x: np.ndarray, n: int=5)->List[Tuple[int, float, float]]:
+def get_sections(x, n=5):
 
     if not isinstance(n, int) or n <= 0:
         raise AttributeError("n must be a positive int")
@@ -23,7 +23,7 @@ def get_sections(x: np.ndarray, n: int=5)->List[Tuple[int, float, float]]:
     return result
 
 
-def discrete(x: np.ndarray, n: int=5)->np.ndarray:
+def discrete(x, n=5):
     '''
     计算出每位数据所处的百分位数区间位置,默认分为5段,段数从1开始计数,数值越大越接近100%
     '''
@@ -38,8 +38,16 @@ def discrete(x: np.ndarray, n: int=5)->np.ndarray:
             res[mask] = (i + 1)
         return res
 
+def discrete_distribution(x, n=5):
+    if (isinstance(n, int) and n <= 0) or isinstance(x[0], np.str_):
+        return x
+    else:
+        res = np.array([0] * x.shape[-1], dtype=int)
+        points = get_sections(x=x, n=n)
+        return points
 
-def discrete_features(X: np.ndarray, N: Union[int, Sequence[int]]= 5)->np.ndarray:
+
+def discrete_features(X, N= 5):
     '''
     计算特征矩阵每一项特征的百分位数均分离散化,
     参数X必须为二维数组,且特征为列,数据为行,

@@ -1,3 +1,4 @@
+#coding:utf-8
 __all__=["Distribution","Woe"]
 
 from .distribution import Distribution

@@ -1,6 +1,7 @@
+#coding:utf-8
 __all__ = ['count_binary']
 
-from .check import check_array_binary
+from score_card_model.utils.check import check_array_binary
 
 
 def count_binary(a, event=1):
