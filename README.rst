@@ -4,9 +4,20 @@ ScoreCardModel
 
 version: 0.0.1
 
-author: hsz
+status: dev
 
-email: hsz1273327@gmail.com
+author: 87
+
+email: 
+
+Desc
+--------------------------------
+
+simple tools
+
+
+keywords:tools
+
 
 Feature
 ----------------------
@@ -20,8 +31,6 @@ Example
 
 
 
-
-
 Install
 --------------------------------
 
@@ -31,7 +40,7 @@ Install
 Documentation
 --------------------------------
 
-`Documentation on Readthedocs <https://github.com/data-science-tools/ScoreCardModel/>`_.
+`Documentation on Readthedocs <>`_.
 
 
 
@@ -39,8 +48,7 @@ TODO
 -----------------------------------
 * todo
 
-
-
 Limitations
 -----------
 * limit
+

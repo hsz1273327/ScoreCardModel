@@ -1,16 +1,18 @@
 from codecs import open
 from setuptools import setup, find_packages
 from os import path
+from Cython.Build import cythonize
+from Cython.Compiler import Options
 
 REQUIREMETS_DEV_FILE = 'requirements_dev.txt'
 REQUIREMETS_TEST_FILE = 'requirements_test.txt'
 REQUIREMETS_FILE = 'requirements.txt'
 PROJECTNAME = 'ScoreCardModel'
 VERSION = '0.0.1'
-DESCRIPTION = 'simple tools for credit rating.'
-URL = 'https://github.com/data-science-tools/ScoreCardModel/'
-AUTHOR = 'hsz'
-AUTHOR_EMAIL = 'hsz1273327@gmail.com'
+DESCRIPTION = 'simple tools'
+URL = ''
+AUTHOR = '87'
+AUTHOR_EMAIL = ''
 LICENSE = 'MIT'
 CLASSIFIERS = [
     'Development Status :: 3 - Alpha',
@@ -20,7 +22,7 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.6',
     'Topic :: Documentation :: Sphinx',
 ]
-KEYWORDS = ["math", "finance"]
+KEYWORDS = ("tools",)
 PACKAGES = find_packages(exclude=['contrib', 'docs', 'test'])
 ZIP_SAFE = False
 
@@ -37,6 +39,13 @@ with open(path.join(REQUIREMETS_DIR, REQUIREMETS_DEV_FILE), encoding='utf-8') as
 
 with open(path.join(REQUIREMETS_DIR, REQUIREMETS_TEST_FILE), encoding='utf-8') as f:
     REQUIREMETS_TEST = f.readlines()
+
+extensions = [
+    Extension("ScoreCardModel.libScoreCardModel",
+          sources = ["ScoreCardModel/libScoreCardModel.pyx"],
+          include_dirs=[numpy.get_include()],
+          language = "c++")
+]
 setup(
     name=PROJECTNAME,
     version=VERSION,
@@ -55,7 +64,8 @@ setup(
         'dev': REQUIREMETS_DEV,
         'test': REQUIREMETS_TEST
     },
-
+    ext_modules=cythonize(extensions),
+    
     zip_safe=ZIP_SAFE,
     data_files=[('requirements', ['requirements/requirements.txt', 'requirements/requirements_dev.txt', 'requirements/requirements_test.txt'])]
 )
