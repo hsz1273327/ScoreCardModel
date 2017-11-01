@@ -1,7 +1,7 @@
 
 # ScoreCardModel
 
-+ version: 1.0.0
++ version: 1.0.1
 + status: dev
 + author: 87
 + email: 
