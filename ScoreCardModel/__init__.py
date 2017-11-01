@@ -49,9 +49,9 @@
 
 >>> from sklearn import datasets
 >>> import pandas as pd
->>> from ScoreCardModel.discretization imnport Discretization
->>> from ScoreCardModel.weight_of_evidence imnport WeightOfEvidence
->>> from ScoreCardModel.models.logistic_regression import LogisticRegressionModel
+>>> from ScoreCardModel.discretization import Discretization
+>>> from ScoreCardModel.weight_of_evidence import WeightOfEvidence
+>>> from ScoreCardModel.models.logistic_regression_model import LogisticRegressionModel
 >>> from ScoreCardModel.score_card import ScoreCardModel
 >>>
 >>> class MyLR(LogisticRegressionModel):

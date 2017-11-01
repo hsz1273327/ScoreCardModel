@@ -1,10 +1,10 @@
 
 # ScoreCardModel
 
-+ version: 1.0.1
++ version: 1.0.2
 + status: dev
-+ author: 87
-+ email: 
++ author: hsz
++ email: hsz1273327@gmail.com
 
 ## Description
 
@@ -22,9 +22,9 @@ keywords:math,finance
 ```
 >>> from sklearn import datasets
 >>> import pandas as pd
->>> from ScoreCardModel.discretization imnport Discretization
->>> from ScoreCardModel.weight_of_evidence imnport WeightOfEvidence
->>> from ScoreCardModel.models.logistic_regression import LogisticRegressionModel
+>>> from ScoreCardModel.discretization import Discretization
+>>> from ScoreCardModel.weight_of_evidence import WeightOfEvidence
+>>> from ScoreCardModel.models.logistic_regression_model import LogisticRegressionModel
 >>> from ScoreCardModel.score_card import ScoreCardModel
 >>>
 >>> class MyLR(LogisticRegressionModel):
@@ -84,10 +84,4 @@ array([[ 0.46315882,  0.53684118]])
 
 ## Documentation
 
-Documentation on github page <>
-
-
-
-
-
-
+Documentation on github page <https://data-science-tools.github.io/ScoreCardModel/>
