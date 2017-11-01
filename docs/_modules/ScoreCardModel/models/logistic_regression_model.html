@@ -46,19 +46,55 @@
 <span></span><span class="sd">&quot;&quot;&quot;logistic回归模型</span>
 <span class="sd">=========================</span>
 
-
+<span class="sd">基础分类器,广泛应用在工业领域.</span>
 
 
 <span class="sd">用法</span>
 <span class="sd">---------------------</span>
 
-
-<span class="sd">:: python</span>
-
-
-<span class="sd">class MyLR(LogisticRegressionModel):</span>
+<span class="sd">由于数据进来格式千奇百怪,这个模型最好的用法是继承后重写</span>
+<span class="sd">`predict`,`pre_trade`,`pre_trade_batch`这几个方法,适当的也可以重写`train`方法.</span>
 
 
+<span class="sd">.. code:: python</span>
+
+<span class="sd">    class MyLR(LogisticRegressionModel):</span>
+<span class="sd">        def predict(self, x):</span>
+<span class="sd">            x = self.pre_trade(x)</span>
+<span class="sd">            return self._predict_proba(x)</span>
+
+<span class="sd">        def pre_trade(self, x):</span>
+<span class="sd">            import numpy as np</span>
+<span class="sd">            result = []</span>
+<span class="sd">            for i, v in x.items():</span>
+<span class="sd">                t = self.ds[i].transform([v])[0]</span>
+<span class="sd">                r = self.woes[i].transform([t])[0]</span>
+<span class="sd">                result.append(r)</span>
+<span class="sd">            return np.array(result)</span>
+<span class="sd">        def _pre_trade_batch_row(self,row,Y,bins):</span>
+<span class="sd">            d = Discretization(bins)</span>
+<span class="sd">            d_row = d.transform(row)</span>
+<span class="sd">            woe = WeightOfEvidence()</span>
+<span class="sd">            woe.fit(d_row,Y)</span>
+<span class="sd">            return d,woe,woe.transform(d_row)</span>
+<span class="sd">        </span>
+<span class="sd">        def pre_trade_batch(self, X,Y):</span>
+<span class="sd">            self.ds = {}</span>
+<span class="sd">            self.woes = {}</span>
+<span class="sd">            self.table = {}</span>
+<span class="sd">            self.ds[&quot;sepal length (cm)&quot;],self.woes[&quot;sepal length (cm)&quot;],self.table[&quot;sepal length (cm)&quot;]= self._pre_trade_batch_row(</span>
+<span class="sd">                X[&quot;sepal length (cm)&quot;],Y,[0,2,5,8])</span>
+<span class="sd">            self.ds[&#39;sepal width (cm)&#39;],self.woes[&#39;sepal width (cm)&#39;],self.table[&#39;sepal width (cm)&#39;] = self._pre_trade_batch_row(</span>
+<span class="sd">                X[&#39;sepal width (cm)&#39;],Y,[0,2,2.5,3,3.5,5])</span>
+<span class="sd">            self.ds[&#39;petal length (cm)&#39;],self.woes[&#39;petal length (cm)&#39;],self.table[&#39;petal length (cm)&#39;] = self._pre_trade_batch_row(</span>
+<span class="sd">                X[&#39;petal length (cm)&#39;],Y,[0,1,2,3,4,5,7])</span>
+<span class="sd">            self.ds[&#39;petal width (cm)&#39;],self.woes[&#39;petal width (cm)&#39;],self.table[&#39;petal width (cm)&#39;] = self._pre_trade_batch_row(</span>
+<span class="sd">                X[&#39;petal width (cm)&#39;],Y,[0,1,2,3])</span>
+<span class="sd">            return pd.DataFrame(self.table)</span>
+
+<span class="sd">    lr = MyLR()</span>
+<span class="sd">    lr.train(l,z)</span>
+<span class="sd">    lr.predict(l.loc[0].to_dict())</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">.meta</span> <span class="k">import</span> <span class="n">Model</span>
@@ -91,8 +127,8 @@
 
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
 
 <div class="viewcode-block" id="LogisticRegressionModel.predict"><a class="viewcode-back" href="../../../ScoreCardModel.models.html#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;预测用的接口,根据需求重写实现&quot;&quot;&quot;</span>
@@ -113,7 +149,7 @@
 
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
 <div class="viewcode-block" id="LogisticRegressionModel.pre_trade"><a class="viewcode-back" href="../../../ScoreCardModel.models.html#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.pre_trade">[docs]</a>    <span class="k">def</span> <span class="nf">pre_trade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;数据预处理,预测的时候由于输入未必是处理好的,因此需要先做下预处理&quot;&quot;&quot;</span>
@@ -130,7 +166,7 @@
         <span class="k">return</span> <span class="n">x</span></div>
 
 <div class="viewcode-block" id="LogisticRegressionModel.pre_trade_batch"><a class="viewcode-back" href="../../../ScoreCardModel.models.html#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.pre_trade_batch">[docs]</a>    <span class="k">def</span> <span class="nf">pre_trade_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;批量数据预处理,预测的时候由于输入未必是处理好的,因此需要先做下预处理&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;批量数据预处理,训练的时候由于输入未必是处理好的,因此需要先做下预处理&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_trade</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -148,13 +184,12 @@
 
 <span class="sd">            sklearn.model: - sklearn的模型</span>
 
-<span class="sd">            </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
         <span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_matrix</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">lr</span></div>
-
 </pre></div>
 
           </div>

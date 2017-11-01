@@ -36,10 +36,11 @@ iv值就是这以特征的总信息量也就是各枚举值信息量的和
 .. math:: IV = \sum_{k=0}^n IV_i
 
 
-用法
-------
+使用方法:
+----------
 
 >>> from sklearn import datasets
+>>> import pandas as pd
 >>> iris = datasets.load_iris()
 >>> y = iris.target
 >>> z = (y==0)

@@ -62,9 +62,8 @@
 <li>使用深度学习,深度学习自带特征抽象能力.</li>
 </ul>
 <p>本模型就是第一种思路的实践.</p>
-</div>
 <div class="section" id="id2">
-<h3>模块设计<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<h4>模块设计:<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
 <p>本模块有如下几个子模块:</p>
 <ul class="simple">
 <li>连续数据离散化模块 discretization</li>
@@ -74,11 +73,11 @@
 </ul>
 </div>
 <div class="section" id="id3">
-<h3>依赖<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<h4>依赖:<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
 <p>本模块依赖numpy,sklearn,pandas</p>
 </div>
 <div class="section" id="id4">
-<h3>用法<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<h4>使用方法:<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
 <p>任何机器学习模型,使用流程都差不多</p>
 <ul class="simple">
 <li>清洗特征,本模型不管</li>
@@ -88,12 +87,78 @@
 <li>重复上面的步骤找到效果最好的一个模型.</li>
 <li>初始化一个`ScoreCardModel`用于计算最终得分</li>
 </ul>
-<p>举例:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.discretization</span> <span class="n">imnport</span> <span class="n">Discretization</span>
+</div>
+<div class="section" id="id5">
+<h4>一个完整的例子:<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">datasets</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.discretization</span> <span class="n">imnport</span> <span class="n">Discretization</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.weight_of_evidence</span> <span class="n">imnport</span> <span class="n">WeightOfEvidence</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.models.logistic_regression</span> <span class="k">import</span> <span class="n">LogisticRegressionModel</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.score_card</span> <span class="k">import</span> <span class="n">ScoreCardModel</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyLR</span><span class="p">(</span><span class="n">LogisticRegressionModel</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_trade</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_proba</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">pre_trade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">v</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">t</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">_pre_trade_batch_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">row</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">bins</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">d</span> <span class="o">=</span> <span class="n">Discretization</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">d_row</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">woe</span> <span class="o">=</span> <span class="n">WeightOfEvidence</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">woe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">d_row</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="k">return</span> <span class="n">d</span><span class="p">,</span><span class="n">woe</span><span class="p">,</span><span class="n">woe</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">d_row</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">pre_trade_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">woes</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;sepal length (cm)&quot;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="s2">&quot;sepal length (cm)&quot;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sepal length (cm)&quot;</span><span class="p">]</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_trade_batch_row</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">X</span><span class="p">[</span><span class="s2">&quot;sepal length (cm)&quot;</span><span class="p">],</span><span class="n">Y</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">8</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;sepal width (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="s1">&#39;sepal width (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;sepal width (cm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_trade_batch_row</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">X</span><span class="p">[</span><span class="s1">&#39;sepal width (cm)&#39;</span><span class="p">],</span><span class="n">Y</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">2.5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mf">3.5</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;petal length (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="s1">&#39;petal length (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;petal length (cm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_trade_batch_row</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">X</span><span class="p">[</span><span class="s1">&#39;petal length (cm)&#39;</span><span class="p">],</span><span class="n">Y</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;petal width (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="s1">&#39;petal width (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;petal width (cm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_trade_batch_row</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">X</span><span class="p">[</span><span class="s1">&#39;petal width (cm)&#39;</span><span class="p">],</span><span class="n">Y</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iris</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">feature_names</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lr</span> <span class="o">=</span> <span class="n">MyLR</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lr</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+<span class="go">array([[ 0.46315882,  0.53684118]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span> <span class="o">=</span> <span class="n">ScoreCardModel</span><span class="p">(</span><span class="n">lr</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+<span class="go">104.3</span>
 </pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h4>模型序列化<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<p>要实际应用模型我们就得想办法保存我们的训练成果,也就是序列化.这个包使用dill做python的序列化主要工具,
+而为了用于传递和存入数据库,我们又使用base64再编码一次.</p>
+<p>无论是分类模型还是评分卡模型,都混入了`SerializeMixin`,这个Mixin提供了对象的序列化能力
+和从这个序列化后的字符串转化到模型对象的能力.其接口为`obj.dumps`和`clz.loads`</p>
+<p>示例:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sc_str</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">dumps</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc_l</span> <span class="o">=</span> <span class="n">ScoreCardModel</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">sc_str</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc_l</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+<span class="go">104.3</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -132,7 +197,11 @@
 </div>
 <div class="section" id="module-ScoreCardModel.discretization">
 <span id="scorecardmodel-discretization-module"></span><h2>ScoreCardModel.discretization module<a class="headerlink" href="#module-ScoreCardModel.discretization" title="Permalink to this headline">¶</a></h2>
-<p>离散化连续数据,使用方法:</p>
+<div class="section" id="id7">
+<h3>离散化连续数据<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>我们使用pandas来对连续数据做离散化处理.其接口尽量与sklearn的数据预处理模块接近.</p>
+<div class="section" id="id8">
+<h4>使用方法:<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Discretization</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.5</span><span class="p">,</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">3.5</span><span class="p">]))</span>
 <span class="go">[&#39;(0, 2]&#39;, &#39;(0, 2]&#39;, &#39;(2, 4]&#39;, &#39;(2, 4]&#39;]</span>
@@ -142,7 +211,7 @@
 <dt id="ScoreCardModel.discretization.Discretization">
 <em class="property">class </em><code class="descclassname">ScoreCardModel.discretization.</code><code class="descname">Discretization</code><span class="sig-paren">(</span><em>bins</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/discretization.html#Discretization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.discretization.Discretization" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>离散化连续数据.需要实例化.</p>
+<p>离散化连续数据.需要实例化以保存bins状态.</p>
 <dl class="attribute">
 <dt id="ScoreCardModel.discretization.Discretization.bins">
 <code class="descname">bins</code><a class="headerlink" href="#ScoreCardModel.discretization.Discretization.bins" title="Permalink to this definition">¶</a></dt>
@@ -151,11 +220,6 @@
 <li>用于分段的列表,第一位为下限,最后一位为上限</li>
 </ul>
 </dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="descname">bins</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
 
 <dl class="method">
 <dt id="ScoreCardModel.discretization.Discretization.transform">
@@ -183,13 +247,32 @@
 </dd></dl>
 
 </div>
+</div>
+</div>
 <div class="section" id="module-ScoreCardModel.score_card">
 <span id="scorecardmodel-score-card-module"></span><h2>ScoreCardModel.score_card module<a class="headerlink" href="#module-ScoreCardModel.score_card" title="Permalink to this headline">¶</a></h2>
-<p>评分卡,用于二分类问题通过模型预测的概率来计算得分,使用方法:</p>
+<div class="section" id="id9">
+<h3>评分卡<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>用于二分类问题通过模型预测的概率来计算得分</p>
+<div class="section" id="id10">
+<h4>计算公式:<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<div class="math">
+\[factor = {\frac {p} {log(2)}}\]</div>
+<div class="math">
+\[offset = b - p \cdot {\frac {log(o)} {log(2)}}\]</div>
+<div class="math">
+\[odds = {\frac {p_t} {p_f}}\]</div>
+<div class="math">
+\[score = factor \cdot {log(odds)} + offset\]</div>
+</div>
+<div class="section" id="id11">
+<h4>使用方法:<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span> <span class="o">=</span> <span class="n">ScoreCardModel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>评分卡类默认会使用包装的分类器的`predict`和`pre_trade`方法,
+我们也可以适当的重写评分卡的这两个方法来满足业务要求.</p>
 <dl class="class">
 <dt id="ScoreCardModel.score_card.ScoreCardModel">
 <em class="property">class </em><code class="descclassname">ScoreCardModel.score_card.</code><code class="descname">ScoreCardModel</code><span class="sig-paren">(</span><em>model</em>, <em>b=100</em>, <em>o=1</em>, <em>p=20</em>, <em>round_=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardModel" title="Permalink to this definition">¶</a></dt>
@@ -272,6 +355,8 @@
 </dd></dl>
 
 </div>
+</div>
+</div>
 <div class="section" id="module-ScoreCardModel.weight_of_evidence">
 <span id="scorecardmodel-weight-of-evidence-module"></span><h2>ScoreCardModel.weight_of_evidence module<a class="headerlink" href="#module-ScoreCardModel.weight_of_evidence" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="woe">
@@ -280,8 +365,8 @@
 广义上讲,woe可以算是一种编码方式.
 如何计算这些权重呢?这就得训练.我们需要一组二值代表签数据,
 通过统计离散特征不同枚举值对目标数据的响应情况来计算触发概率,</p>
-<div class="section" id="id5">
-<h4>触发概率<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id12">
+<h4>触发概率<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
 <p>本模型针对二分类问题,事件也就是只有True,False两种.我们当然认为True,枚举值i的触发概率可以这样计算,
 比如某个枚举值i对true的触发概率,就是所有i值时是true的数量除以总的t的数量</p>
 <div class="math">
@@ -289,8 +374,8 @@
 <div class="math">
 \[p_t = {\frac {t_i} {t_{total}}}\]</div>
 </div>
-<div class="section" id="id6">
-<h4>woe<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id13">
+<h4>woe<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
 <p>woe就是计算正负概率的信息值</p>
 <div class="math">
 \[woe_i = log_2({\frac {p_f} {p_t}})\]</div>
@@ -303,9 +388,10 @@
 <div class="math">
 \[IV = \sum_{k=0}^n IV_i\]</div>
 </div>
-<div class="section" id="id7">
-<h4>用法<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id14">
+<h4>使用方法:<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">datasets</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">iris</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
@@ -426,22 +512,39 @@
   <ul>
 <li><a class="reference internal" href="#">ScoreCardModel package</a><ul>
 <li><a class="reference internal" href="#module-ScoreCardModel">Module contents</a><ul>
-<li><a class="reference internal" href="#id1">评分卡模型</a></li>
-<li><a class="reference internal" href="#id2">模块设计</a></li>
-<li><a class="reference internal" href="#id3">依赖</a></li>
-<li><a class="reference internal" href="#id4">用法</a></li>
+<li><a class="reference internal" href="#id1">评分卡模型</a><ul>
+<li><a class="reference internal" href="#id2">模块设计:</a></li>
+<li><a class="reference internal" href="#id3">依赖:</a></li>
+<li><a class="reference internal" href="#id4">使用方法:</a></li>
+<li><a class="reference internal" href="#id5">一个完整的例子:</a></li>
+<li><a class="reference internal" href="#id6">模型序列化</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-ScoreCardModel.discretization">ScoreCardModel.discretization module</a></li>
-<li><a class="reference internal" href="#module-ScoreCardModel.score_card">ScoreCardModel.score_card module</a></li>
+<li><a class="reference internal" href="#module-ScoreCardModel.discretization">ScoreCardModel.discretization module</a><ul>
+<li><a class="reference internal" href="#id7">离散化连续数据</a><ul>
+<li><a class="reference internal" href="#id8">使用方法:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ScoreCardModel.score_card">ScoreCardModel.score_card module</a><ul>
+<li><a class="reference internal" href="#id9">评分卡</a><ul>
+<li><a class="reference internal" href="#id10">计算公式:</a></li>
+<li><a class="reference internal" href="#id11">使用方法:</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-ScoreCardModel.weight_of_evidence">ScoreCardModel.weight_of_evidence module</a><ul>
 <li><a class="reference internal" href="#woe">计算Woe</a><ul>
-<li><a class="reference internal" href="#id5">触发概率</a></li>
-<li><a class="reference internal" href="#id6">woe</a></li>
+<li><a class="reference internal" href="#id12">触发概率</a></li>
+<li><a class="reference internal" href="#id13">woe</a></li>
 <li><a class="reference internal" href="#iv">iv</a></li>
-<li><a class="reference internal" href="#id7">用法</a></li>
+<li><a class="reference internal" href="#id14">使用方法:</a></li>
 </ul>
 </li>
 </ul>

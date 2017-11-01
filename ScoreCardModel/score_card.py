@@ -1,7 +1,26 @@
-"""评分卡,用于二分类问题通过模型预测的概率来计算得分,使用方法:
+r"""评分卡
+===============
+
+用于二分类问题通过模型预测的概率来计算得分
+
+
+计算公式:
+-----------------
+
+.. math:: factor = {\frac {p} {log(2)}}
+.. math:: offset = b - p \cdot {\frac {log(o)} {log(2)}}
+.. math:: odds = {\frac {p_t} {p_f}}
+.. math:: score = factor \cdot {log(odds)} + offset
+
+使用方法:
+------------
+
 
 >>> sc = ScoreCardModel(model)
 >>> sc.predict(x)
+
+评分卡类默认会使用包装的分类器的`predict`和`pre_trade`方法,
+我们也可以适当的重写评分卡的这两个方法来满足业务要求.
 
 """
 import numpy as np
@@ -19,6 +38,7 @@ class ScoreCardModel(SerializeMixin):
         o (int): - 用于计算偏置量
         p (int): - 用于计算偏置量和因数项
         round_ (int): - 精度
+
     """
 
     def __init__(self, model, b=100, o=1, p=20, round_=1):
@@ -26,6 +46,7 @@ class ScoreCardModel(SerializeMixin):
         self.b = b
         self.o = o
         self.p = p
+        self.round_ = round_
 
     def pre_trade(self, x):
         """"数据预处理,预测的时候由于输入未必是处理好的,因此需要先做下预处理"""
@@ -40,7 +61,7 @@ class ScoreCardModel(SerializeMixin):
         Returns:
 
             float: - 预测出来的分数
-            
+
         """
         x = self.pre_trade(x)
         proba = self._model._predict_proba(x)

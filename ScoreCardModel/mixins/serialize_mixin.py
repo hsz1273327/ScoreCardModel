@@ -27,7 +27,7 @@ class SerializeMixin:
     @classmethod
     def loads(clz, dump_str: str):
         """反序列化模型
-        
+
         Parameters:
 
             dump_str (str): - 序列化后的字符串
@@ -37,4 +37,4 @@ class SerializeMixin:
             clz: - 反序列化后返回该类型的实例对象
 
         """
-        return base64.b64decode(dill.loads(dump_str))
+        return dill.loads(base64.b64decode(dump_str))

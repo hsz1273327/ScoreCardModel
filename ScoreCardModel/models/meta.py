@@ -26,7 +26,7 @@ class Model(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def pre_trade_batch(self, x):
+    def pre_trade_batch(self, x, y):
         """全部数据预处理
 
         """
@@ -53,12 +53,16 @@ class Model(abc.ABC):
         """
         from sklearn.model_selection import train_test_split
         from sklearn.metrics import classification_report, precision_score
-        y = dataset[target].values
-        columns = list(dataset.columns)
-        columns.remove(target)
-        self.feature_order = columns
-        X_matrix = dataset[columns].as_matrix()
-        X_matrix = self.pre_trade_batch(X_matrix)
+        if isinstance(target, str):
+            y = dataset[target].values
+            columns = list(dataset.columns)
+            columns.remove(target)
+            self.feature_order = columns
+            X_matrix = dataset[columns]
+        else:
+            y = target
+            X_matrix = dataset
+        X_matrix = self.pre_trade_batch(X_matrix, target)
         X_train, X_test, y_train, y_test = train_test_split(
             X_matrix, y, test_size=test_size, random_state=random_state)
         model = self._train(X_train, y_train, **kwargs)
