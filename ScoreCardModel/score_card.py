@@ -34,7 +34,7 @@ class ScoreCardModel(SerializeMixin):
     Attributes:
 
         _model (ScoreCradModel.models.meta): - 训练好的预测模型
-        b (int): - 偏置量的常数项
+        b (int): - 偏置量的常数项,用于作为基数
         o (int): - 用于计算偏置量
         p (int): - 用于计算偏置量和因数项
         round_ (int): - 精度
