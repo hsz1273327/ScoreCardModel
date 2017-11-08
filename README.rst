@@ -2,13 +2,13 @@
 ScoreCardModel
 ===============================
 
-version: 1.0.3
+* version: 1.0.3
 
-status: dev
+* status: dev
 
-author: hsz
+* author: hsz
 
-email: hsz1273327@gmail.com
+* email: hsz1273327@gmail.com
 
 Desc
 --------------------------------

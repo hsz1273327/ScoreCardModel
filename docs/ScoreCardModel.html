@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>ScoreCardModel package &#8212; ScoreCardModel  documentation</title>
-    
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -24,7 +21,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="ScoreCardModel.mixins package" href="ScoreCardModel.mixins.html" />
@@ -36,7 +33,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -215,7 +212,7 @@
 <dl class="attribute">
 <dt id="ScoreCardModel.discretization.Discretization.bins">
 <code class="descname">bins</code><a class="headerlink" href="#ScoreCardModel.discretization.Discretization.bins" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Sequence</em> &#8211;</p>
+<dd><p><em>Sequence</em> –</p>
 <ul class="simple">
 <li>用于分段的列表,第一位为下限,最后一位为上限</li>
 </ul>
@@ -228,7 +225,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>Sequence</em>) &#8211; <ul class="simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>Sequence</em>) – <ul class="simple">
 <li>用于分段的序列</li>
 </ul>
 </td>
@@ -268,7 +265,7 @@
 <div class="section" id="id11">
 <h4>使用方法:<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span> <span class="o">=</span> <span class="n">ScoreCardModel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">pre_trade</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>评分卡类默认会使用包装的分类器的`predict`和`pre_trade`方法,
@@ -281,7 +278,7 @@
 <dl class="attribute">
 <dt id="ScoreCardModel.score_card.ScoreCardModel._model">
 <code class="descname">_model</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardModel._model" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>ScoreCradModel.models.meta</em> &#8211;</p>
+<dd><p><em>ScoreCradModel.models.meta</em> –</p>
 <ul class="simple">
 <li>训练好的预测模型</li>
 </ul>
@@ -290,16 +287,16 @@
 <dl class="attribute">
 <dt id="ScoreCardModel.score_card.ScoreCardModel.b">
 <code class="descname">b</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardModel.b" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> &#8211;</p>
+<dd><p><em>int</em> –</p>
 <ul class="simple">
-<li>偏置量的常数项</li>
+<li>偏置量的常数项,用于作为基数</li>
 </ul>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ScoreCardModel.score_card.ScoreCardModel.o">
 <code class="descname">o</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardModel.o" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> &#8211;</p>
+<dd><p><em>int</em> –</p>
 <ul class="simple">
 <li>用于计算偏置量</li>
 </ul>
@@ -308,7 +305,7 @@
 <dl class="attribute">
 <dt id="ScoreCardModel.score_card.ScoreCardModel.p">
 <code class="descname">p</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardModel.p" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> &#8211;</p>
+<dd><p><em>int</em> –</p>
 <ul class="simple">
 <li>用于计算偏置量和因数项</li>
 </ul>
@@ -317,7 +314,7 @@
 <dl class="attribute">
 <dt id="ScoreCardModel.score_card.ScoreCardModel.round_">
 <code class="descname">round_</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardModel.round_" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> &#8211;</p>
+<dd><p><em>int</em> –</p>
 <ul class="simple">
 <li>精度</li>
 </ul>
@@ -326,17 +323,18 @@
 <dl class="method">
 <dt id="ScoreCardModel.score_card.ScoreCardModel.pre_trade">
 <code class="descname">pre_trade</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardModel.pre_trade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardModel.pre_trade" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#8220;数据预处理,预测的时候由于输入未必是处理好的,因此需要先做下预处理</p>
+<dd><p>“数据预处理,预测的时候由于输入未必是处理好的,因此需要先做下预处理</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ScoreCardModel.score_card.ScoreCardModel.predict">
 <code class="descname">predict</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardModel.predict" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p>用于预测某一条预处理过的特征向量得分的方法</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>Sequence</em>) &#8211; <ul class="simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>Sequence</em>) – <ul class="simple">
 <li>用于分段的序列</li>
 </ul>
 </td>
@@ -421,7 +419,7 @@
 <p>计算某一离散特征的woe值
 .. attribute:: woe</p>
 <blockquote>
-<div><p><em>Dict</em> &#8211;</p>
+<div><p><em>Dict</em> –</p>
 <ul class="simple">
 <li>训练好的证据权重</li>
 </ul>
@@ -429,7 +427,7 @@
 <dl class="attribute">
 <dt id="ScoreCardModel.weight_of_evidence.WeightOfEvidence.iv">
 <code class="descname">iv</code><a class="headerlink" href="#ScoreCardModel.weight_of_evidence.WeightOfEvidence.iv" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Float</em> &#8211;</p>
+<dd><p><em>Float</em> –</p>
 <ul class="simple">
 <li>训练的离散特征的信息量</li>
 </ul>
@@ -444,23 +442,23 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>x</strong> (<em>Sequence</em>) &#8211; <ul>
+<li><strong>x</strong> (<em>Sequence</em>) – <ul>
 <li>离散特征序列</li>
 </ul>
 </li>
-<li><strong>y</strong> (<em>Sequence</em>) &#8211; <ul>
+<li><strong>y</strong> (<em>Sequence</em>) – <ul>
 <li>用于训练的标签序列</li>
 </ul>
 </li>
-<li><strong>event</strong> (<em>any</em>) &#8211; <ul>
+<li><strong>event</strong> (<em>any</em>) – <ul>
 <li>True指代的触发事件</li>
 </ul>
 </li>
-<li><strong>woe_min</strong> (<em>munber</em>) &#8211; <ul>
+<li><strong>woe_min</strong> (<em>munber</em>) – <ul>
 <li>woe的最小值,默认值为-20</li>
 </ul>
 </li>
-<li><strong>woe_max</strong> (<em>munber</em>) &#8211; <ul>
+<li><strong>woe_max</strong> (<em>munber</em>) – <ul>
 <li>woe的最大值,默认值为20</li>
 </ul>
 </li>
@@ -479,7 +477,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>Sequence</em>) &#8211; <ul class="simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>Sequence</em>) – <ul class="simple">
 <li>离散特征序列</li>
 </ul>
 </td>
@@ -556,7 +554,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Welcome to ScoreCardModel&#8217;s documentation!</a></li>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to ScoreCardModel’s documentation!</a></li>
       <li>Next: <a href="ScoreCardModel.mixins.html" title="next chapter">ScoreCardModel.mixins package</a></li>
   </ul></li>
 </ul>
@@ -586,7 +584,7 @@
       &copy;2017, 87.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

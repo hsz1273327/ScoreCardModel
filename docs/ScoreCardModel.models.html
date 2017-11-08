@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>ScoreCardModel.models package &#8212; ScoreCardModel  documentation</title>
-    
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -24,7 +21,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="ScoreCardModel.mixins package" href="ScoreCardModel.mixins.html" />
@@ -35,7 +32,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -104,7 +101,7 @@
 <dl class="attribute">
 <dt id="ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.feature_order">
 <code class="descname">feature_order</code><a class="headerlink" href="#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.feature_order" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Sequence</em> &#8211;</p>
+<dd><p><em>Sequence</em> –</p>
 <ul class="simple">
 <li>特征顺序</li>
 </ul>
@@ -113,7 +110,7 @@
 <dl class="attribute">
 <dt id="ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel._model">
 <code class="descname">_model</code><a class="headerlink" href="#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel._model" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>sklearn.model</em> &#8211;</p>
+<dd><p><em>sklearn.model</em> –</p>
 <ul class="simple">
 <li>训练出来的sklearn的分类器模型</li>
 </ul>
@@ -127,7 +124,7 @@
 <dl class="method">
 <dt id="ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.pre_trade">
 <code class="descname">pre_trade</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/models/logistic_regression_model.html#LogisticRegressionModel.pre_trade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.pre_trade" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#8220;数据预处理,预测的时候由于输入未必是处理好的,因此需要先做下预处理</p>
+<dd><p>“数据预处理,预测的时候由于输入未必是处理好的,因此需要先做下预处理</p>
 </dd></dl>
 
 <dl class="method">
@@ -181,25 +178,25 @@
 <dl class="method">
 <dt id="ScoreCardModel.models.meta.Model.train">
 <code class="descname">train</code><span class="sig-paren">(</span><em>dataset</em>, <em>target</em>, <em>*</em>, <em>test_size=0.3</em>, <em>random_state=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/models/meta.html#Model.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.models.meta.Model.train" title="Permalink to this definition">¶</a></dt>
-<dd><p>训练一组数据</p>
+<dd><p>训练一组数据,输入必须是pandas的DataFrame</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>dataset</strong> (<em>pandas.DataFrame</em>) &#8211; <ul>
+<li><strong>dataset</strong> (<em>pandas.DataFrame</em>) – <ul>
 <li>训练用的DataFrame</li>
 </ul>
 </li>
-<li><strong>target</strong> (<em>str</em>) &#8211; <ul>
+<li><strong>target</strong> (<em>Option</em><em>[</em><em>str</em><em>,</em><em>pandas.seri</em><em>]</em>) – <ul>
 <li>标签数据所在的列</li>
 </ul>
 </li>
-<li><strong>test_size</strong> (<em>float</em>) &#8211; <ul>
+<li><strong>test_size</strong> (<em>float</em>) – <ul>
 <li>测试集比例</li>
 </ul>
 </li>
-<li><strong>random_state</strong> &#8211; <ul>
+<li><strong>random_state</strong> – <ul>
 <li>随机状态</li>
 </ul>
 </li>
@@ -291,7 +288,7 @@
       &copy;2017, 87.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
