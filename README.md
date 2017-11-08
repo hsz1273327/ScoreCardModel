@@ -1,7 +1,7 @@
 
 # ScoreCardModel
 
-+ version: 1.0.2
++ version: 1.0.3
 + status: dev
 + author: hsz
 + email: hsz1273327@gmail.com
@@ -16,6 +16,11 @@ keywords:math,finance
 ## Feature
 
 + Serializable
+
+## change
+
++ Discretization object now use str as the key instead of numpy's str
++ ScoreCardModel now have a different usecase
 
 ## Example
 
@@ -71,7 +76,7 @@ keywords:math,finance
 >>> lr.predict(l.loc[0].to_dict())
 array([[ 0.46315882,  0.53684118]])
 >>> sc = ScoreCardModel(lr)
->>> sc.predict(l.loc[0].to_dict())
+>>> sc.predict(sc.pre_trade(l.loc[0].to_dict()))
 104.3
 
 

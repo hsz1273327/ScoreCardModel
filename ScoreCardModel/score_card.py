@@ -17,7 +17,7 @@ r"""评分卡
 
 
 >>> sc = ScoreCardModel(model)
->>> sc.predict(x)
+>>> sc.predict(sc.pre_trade(x))
 
 评分卡类默认会使用包装的分类器的`predict`和`pre_trade`方法,
 我们也可以适当的重写评分卡的这两个方法来满足业务要求.
@@ -53,7 +53,8 @@ class ScoreCardModel(SerializeMixin):
         return self._model.pre_trade(x)
 
     def predict(self, x):
-        """
+        """用于预测某一条预处理过的特征向量得分的方法
+
         Parameters:
 
             x (Sequence): - 用于分段的序列
@@ -63,8 +64,7 @@ class ScoreCardModel(SerializeMixin):
             float: - 预测出来的分数
 
         """
-        x = self.pre_trade(x)
-        proba = self._model._predict_proba(x)
+        proba = self._model._predict_proba([x])
         factor = self.p / np.log(2)
         offset = self.b - self.p * (np.log(self.o) / np.log(2))
         p_f, p_t = proba[0]

@@ -136,7 +136,7 @@ class WeightOfEvidence:
             else:
                 woe1 = np.log(rate_event / rate_non_event)  # np.log就是ln
             iv += (rate_event - rate_non_event) * woe1
-            woe_dict[l] = woe1
+            woe_dict[str(l)] = woe1
         self.woe = woe_dict
         self.iv = iv
 

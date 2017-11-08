@@ -6,7 +6,6 @@ import abc
 
 class Model(abc.ABC):
     """模型的抽象类
-
     """
     _model = None
     feature_order = None
@@ -40,12 +39,12 @@ class Model(abc.ABC):
         pass
 
     def train(self, dataset, target, *, test_size=0.3, random_state=0, **kwargs):
-        """训练一组数据
+        """训练一组数据,输入必须是pandas的DataFrame
 
         Parameters:
 
             dataset (pandas.DataFrame): - 训练用的DataFrame
-            target (str): - 标签数据所在的列 
+            target (Option[str,pandas.seri]): - 标签数据所在的列 
             test_size (float): - 测试集比例
             random_state: - 随机状态
 
@@ -61,6 +60,7 @@ class Model(abc.ABC):
             X_matrix = dataset[columns]
         else:
             y = target
+            self.feature_order = list(dataset.columns)
             X_matrix = dataset
         X_matrix = self.pre_trade_batch(X_matrix, target)
         X_train, X_test, y_train, y_test = train_test_split(

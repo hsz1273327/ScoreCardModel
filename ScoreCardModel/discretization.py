@@ -49,5 +49,5 @@ class Discretization:
         for i, v in z.items():
             for j, u in v.items():
                 if u == 1:
-                    re.append(j)
+                    re.append(str(j))
         return np.array(re)
