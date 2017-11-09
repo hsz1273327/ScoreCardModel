@@ -270,6 +270,22 @@
 </div>
 <p>评分卡类默认会使用包装的分类器的`predict`和`pre_trade`方法,
 我们也可以适当的重写评分卡的这两个方法来满足业务要求.</p>
+</div>
+<div class="section" id="ks">
+<h4>KS 曲线:<a class="headerlink" href="#ks" title="Permalink to this headline">¶</a></h4>
+<p>不知为何,搞经济金融的喜欢用KS曲线来评估评分卡的效果.abs</p>
+<p>所谓KS曲线计算方法很简单:</p>
+<ol class="arabic simple">
+<li>将得分与实际标签合并后以得分从大到小排序,这个序列设为total</li>
+<li>计算出总共标签中的好标签数量和坏标签数量good_total,bad_total</li>
+</ol>
+<p>3. 获取total前i%的用户计算其中好用户数量good和坏用户数量bad,
+并计算(good/good_total-bad/bad_total)的绝对值,这个值就是i%位的ks值,i从0计算到100,这样得到i%和每位对应的ks值就可以用于绘制x轴和y轴.
+4. 将这两个序列画出来也就得到了ks曲线图.</p>
+<p>在这个计算过程中另外有意义的几个值为:</p>
+<p>好坏比 good/bad</p>
+<p>好占比 good/good_total</p>
+<p>坏占比 bad/bad_total</p>
 <dl class="class">
 <dt id="ScoreCardModel.score_card.KS">
 <em class="property">class </em><code class="descclassname">ScoreCardModel.score_card.</code><code class="descname">KS</code><span class="sig-paren">(</span><em>ks</em>, <em>good_bad_rate</em>, <em>bad_rate</em>, <em>good_rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#KS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.KS" title="Permalink to this definition">¶</a></dt>
@@ -867,6 +883,7 @@
 <li><a class="reference internal" href="#id9">评分卡</a><ul>
 <li><a class="reference internal" href="#id10">计算公式:</a></li>
 <li><a class="reference internal" href="#id11">使用方法:</a></li>
+<li><a class="reference internal" href="#ks">KS 曲线:</a></li>
 </ul>
 </li>
 </ul>
