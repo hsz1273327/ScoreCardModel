@@ -121,6 +121,36 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span> <span class="o">=</span> <span class="n">ScoreCardModel</span><span class="p">(</span><span class="n">lr</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">pre_trade</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>
 <span class="go">104.3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)):</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">score</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">pre_trade</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">scs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ScoreCardWithKSModel</span><span class="o">.</span><span class="n">Threshold_to_score</span><span class="p">(</span><span class="n">scs</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ScoreCardWithKSModel</span><span class="o">.</span><span class="n">Score_to_threshold</span><span class="p">(</span><span class="n">scs</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">70</span><span class="p">))</span>
+<span class="go">1.0</span>
+<span class="go">.</span>
+<span class="go">.</span>
+<span class="go">.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ScoreCardWithKSModel</span><span class="o">.</span><span class="n">Score_to_threshold</span><span class="p">(</span><span class="n">scs</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">100</span><span class="p">))</span>
+<span class="go">0.3467</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ScoreCardWithKSModel</span><span class="o">.</span><span class="n">Get_ks</span><span class="p">(</span><span class="n">scs</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span><span class="o">.</span><span class="n">ks</span><span class="p">)</span>
+<span class="go">0.9</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ScoreCardWithKSModel.Drawks(scs, y=z)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scsc</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">))]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scks</span> <span class="o">=</span> <span class="n">ScoreCardWithKSModel</span><span class="o">.</span><span class="n">From_scorecard</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">scks</span><span class="o">.</span><span class="n">threshold_to_score</span><span class="p">(</span><span class="n">scsc</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">scks</span><span class="o">.</span><span class="n">score_to_threshold</span><span class="p">(</span><span class="n">scsc</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">70</span><span class="p">))</span>
+<span class="go">1.0</span>
+<span class="go">.</span>
+<span class="go">.</span>
+<span class="go">.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">scks</span><span class="o">.</span><span class="n">score_to_threshold</span><span class="p">(</span><span class="n">scsc</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">100</span><span class="p">))</span>
+<span class="go">0.3467</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">scks</span><span class="o">.</span><span class="n">get_ks</span><span class="p">(</span><span class="n">scsc</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span><span class="o">.</span><span class="n">ks</span><span class="p">)</span>
+<span class="go">0.9</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scks</span><span class="o">.</span><span class="n">drawks</span><span class="p">(</span><span class="n">scsc</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
