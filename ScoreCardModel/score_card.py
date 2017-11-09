@@ -22,6 +22,30 @@ r"""评分卡
 评分卡类默认会使用包装的分类器的`predict`和`pre_trade`方法,
 我们也可以适当的重写评分卡的这两个方法来满足业务要求.
 
+
+KS 曲线:
+--------------
+
+不知为何,搞经济金融的喜欢用KS曲线来评估评分卡的效果.abs
+
+所谓KS曲线计算方法很简单:
+
+1. 将得分与实际标签合并后以得分从大到小排序,这个序列设为total
+
+2. 计算出总共标签中的好标签数量和坏标签数量good_total,bad_total
+
+3. 获取total前i%的用户计算其中好用户数量good和坏用户数量bad并计算(good/good_total-bad/bad_total)的绝对值,这个值就是i%位的ks值,i从0计算到100,这样得到i%和每位对应的ks值就可以用于绘制x轴和y轴.
+
+4. 将这两个序列画出来也就得到了ks曲线图.
+
+在这个计算过程中另外有意义的几个值为:
+
+好坏比 good/bad
+
+好占比 good/good_total
+
+坏占比 bad/bad_total
+
 """
 import numpy as np
 import pandas as pd
