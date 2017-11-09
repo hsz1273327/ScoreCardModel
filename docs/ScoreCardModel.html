@@ -278,10 +278,9 @@
 <ol class="arabic simple">
 <li>将得分与实际标签合并后以得分从大到小排序,这个序列设为total</li>
 <li>计算出总共标签中的好标签数量和坏标签数量good_total,bad_total</li>
+<li>获取total前i%的用户计算其中好用户数量good和坏用户数量bad并计算(good/good_total-bad/bad_total)的绝对值,这个值就是i%位的ks值,i从0计算到100,这样得到i%和每位对应的ks值就可以用于绘制x轴和y轴.</li>
+<li>将这两个序列画出来也就得到了ks曲线图.</li>
 </ol>
-<p>3. 获取total前i%的用户计算其中好用户数量good和坏用户数量bad,
-并计算(good/good_total-bad/bad_total)的绝对值,这个值就是i%位的ks值,i从0计算到100,这样得到i%和每位对应的ks值就可以用于绘制x轴和y轴.
-4. 将这两个序列画出来也就得到了ks曲线图.</p>
 <p>在这个计算过程中另外有意义的几个值为:</p>
 <p>好坏比 good/bad</p>
 <p>好占比 good/good_total</p>
