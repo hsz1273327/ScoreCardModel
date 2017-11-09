@@ -1,0 +1,240 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ScoreCardModel.weight_of_evidence &#8212; ScoreCardModel  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ScoreCardModel.weight_of_evidence</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;计算Woe</span>
+<span class="sd">==============</span>
+
+<span class="sd">针对离散数据,我们需要将离散的枚举值替换成数值才可以用于计算.这些数值就是各个枚举值的权重.</span>
+<span class="sd">广义上讲,woe可以算是一种编码方式.</span>
+<span class="sd">如何计算这些权重呢?这就得训练.我们需要一组二值代表签数据,</span>
+<span class="sd">通过统计离散特征不同枚举值对目标数据的响应情况来计算触发概率,</span>
+
+
+<span class="sd">触发概率</span>
+<span class="sd">---------</span>
+
+<span class="sd">本模型针对二分类问题,事件也就是只有True,False两种.我们当然认为True,枚举值i的触发概率可以这样计算,</span>
+<span class="sd">比如某个枚举值i对true的触发概率,就是所有i值时是true的数量除以总的t的数量</span>
+
+<span class="sd">.. math:: p_f = {\frac {f_i} {f_{total}}}</span>
+
+<span class="sd">.. math:: p_t = {\frac {t_i} {t_{total}}}</span>
+
+
+<span class="sd">woe</span>
+<span class="sd">------</span>
+
+<span class="sd">woe就是计算正负概率的信息值</span>
+
+<span class="sd">.. math:: woe_i = log_2({\frac {p_f} {p_t}})</span>
+
+
+<span class="sd">iv</span>
+<span class="sd">-----</span>
+
+<span class="sd">iv值就是这以特征的总信息量也就是各枚举值信息量的和</span>
+
+<span class="sd">.. math:: IV_i = (p_f-p_t)*log_2({\frac {p_f} {p_t}})</span>
+
+<span class="sd">.. math:: IV = \sum_{k=0}^n IV_i</span>
+
+
+<span class="sd">使用方法:</span>
+<span class="sd">----------</span>
+
+<span class="sd">&gt;&gt;&gt; from sklearn import datasets</span>
+<span class="sd">&gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">&gt;&gt;&gt; iris = datasets.load_iris()</span>
+<span class="sd">&gt;&gt;&gt; y = iris.target</span>
+<span class="sd">&gt;&gt;&gt; z = (y==0)</span>
+<span class="sd">&gt;&gt;&gt; l = pd.DataFrame(iris.data,columns=iris.feature_names)</span>
+<span class="sd">&gt;&gt;&gt; d = Discretization([0,5.0,5.5,7])</span>
+<span class="sd">&gt;&gt;&gt; re = d.transform(l[&quot;sepal length (cm)&quot;])</span>
+<span class="sd">&gt;&gt;&gt; woe = WeightOfEvidence()</span>
+<span class="sd">&gt;&gt;&gt; woe.fit(re,z)</span>
+<span class="sd">&gt;&gt;&gt; woe.woe</span>
+<span class="sd">{&#39;(0, 5]&#39;: 2.6390573296152589,</span>
+<span class="sd"> &#39;(5, 5.5]&#39;: 1.5581446180465499,</span>
+<span class="sd"> &#39;(5.5, 7]&#39;: -2.5389738710582761}</span>
+<span class="sd">&gt;&gt;&gt; woe.iv</span>
+<span class="sd">3.617034906554693</span>
+<span class="sd">&gt;&gt;&gt; test = [&#39;(0, 5]&#39;, &#39;(0, 5]&#39;, &#39;(5.5, 7]&#39;, &#39;(5.5, 7]&#39;, &#39;(5, 5.5]&#39;, &#39;(5, 5.5]&#39;,</span>
+<span class="sd">       &#39;(5.5, 7]&#39;, &#39;(5, 5.5]&#39;, &#39;(5, 5.5]&#39;, &#39;(5, 5.5]&#39;, &#39;(0, 5]&#39;]</span>
+<span class="sd">&gt;&gt;&gt; woe.transform(test)</span>
+<span class="sd">array([ 2.63905733,  2.63905733, -2.53897387, -2.53897387,  1.55814462,</span>
+<span class="sd">        1.55814462, -2.53897387,  1.55814462,  1.55814462,  1.55814462,</span>
+<span class="sd">        2.63905733])</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils.multiclass</span> <span class="k">import</span> <span class="n">type_of_target</span>
+
+
+<div class="viewcode-block" id="WeightOfEvidence"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.weight_of_evidence.WeightOfEvidence">[docs]</a><span class="k">class</span> <span class="nc">WeightOfEvidence</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;计算某一离散特征的woe值</span>
+<span class="sd">    Attributes:</span>
+
+<span class="sd">        woe (Dict): - 训练好的证据权重</span>
+<span class="sd">        iv (Float): - 训练的离散特征的信息量</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">woe</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iv</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_posibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;计算触发概率</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">            x (Sequence): - 离散特征序列</span>
+<span class="sd">            tag (Sequence): - 用于训练的标签序列</span>
+<span class="sd">            event (any): - True指代的触发事件</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">            Dict[str,Tuple[rate_T, rate_F]]: - 训练好后的好坏触发概率</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">type_of_target</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;binary&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;tag must be a binary array&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">type_of_target</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;continuous&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;input array must not continuous&quot;</span><span class="p">)</span>
+        <span class="n">tag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">event_total</span> <span class="o">=</span> <span class="p">(</span><span class="n">tag</span> <span class="o">==</span> <span class="n">event</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">non_event_total</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">event_total</span>
+        <span class="n">x_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">pos_dic</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">x1</span> <span class="ow">in</span> <span class="n">x_labels</span><span class="p">:</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="n">tag</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">x1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">event_count</span> <span class="o">=</span> <span class="p">(</span><span class="n">y1</span> <span class="o">==</span> <span class="n">event</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">non_event_count</span> <span class="o">=</span> <span class="n">y1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">event_count</span>
+            <span class="n">rate_event</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">event_count</span> <span class="o">/</span> <span class="n">event_total</span>
+            <span class="n">rate_non_event</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">non_event_count</span> <span class="o">/</span> <span class="n">non_event_total</span>
+            <span class="n">pos_dic</span><span class="p">[</span><span class="n">x1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">rate_event</span><span class="p">,</span> <span class="n">rate_non_event</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pos_dic</span>
+
+<div class="viewcode-block" id="WeightOfEvidence.fit"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.weight_of_evidence.WeightOfEvidence.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">woe_min</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="n">woe_max</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;训练对单独一项自变量(列,特征)的woe值.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">            x (Sequence): - 离散特征序列</span>
+<span class="sd">            y (Sequence): - 用于训练的标签序列</span>
+<span class="sd">            event (any): - True指代的触发事件</span>
+<span class="sd">            woe_min (munber): - woe的最小值,默认值为-20</span>
+<span class="sd">            woe_max (munber): - woe的最大值,默认值为20</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">woe_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">iv</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">pos_dic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_posibility</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="n">event</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="p">(</span><span class="n">rate_event</span><span class="p">,</span> <span class="n">rate_non_event</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pos_dic</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">rate_event</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">woe1</span> <span class="o">=</span> <span class="n">woe_min</span>
+            <span class="k">elif</span> <span class="n">rate_non_event</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">woe1</span> <span class="o">=</span> <span class="n">woe_max</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">woe1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">rate_event</span> <span class="o">/</span> <span class="n">rate_non_event</span><span class="p">)</span>  <span class="c1"># np.log就是ln</span>
+            <span class="n">iv</span> <span class="o">+=</span> <span class="p">(</span><span class="n">rate_event</span> <span class="o">-</span> <span class="n">rate_non_event</span><span class="p">)</span> <span class="o">*</span> <span class="n">woe1</span>
+            <span class="n">woe_dict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">=</span> <span class="n">woe1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">woe</span> <span class="o">=</span> <span class="n">woe_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iv</span> <span class="o">=</span> <span class="n">iv</span></div>
+
+<div class="viewcode-block" id="WeightOfEvidence.transform"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.weight_of_evidence.WeightOfEvidence.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;将离散特征序列转换为woe值组成的序列</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">            X (Sequence): - 离散特征序列</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">            numpy.array: - 替换特征序列枚举值为woe对应数值后的序列</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">woe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">X</span><span class="p">])</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, 87.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

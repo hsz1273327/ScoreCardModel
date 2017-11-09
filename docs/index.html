@@ -5,12 +5,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>评分卡模型 &#8212; ScoreCardModel  documentation</title>
-    
+    <title>Welcome to ScoreCardModel’s documentation! &#8212; ScoreCardModel  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -24,10 +21,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="特征选择工具" href="特征选择工具.html" />
+    <link rel="next" title="ScoreCardModel package" href="ScoreCardModel.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -43,36 +40,156 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="id1">
-<h1>评分卡模型<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="welcome-to-scorecardmodel-s-documentation">
+<h1>Welcome to ScoreCardModel’s documentation!<a class="headerlink" href="#welcome-to-scorecardmodel-s-documentation" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>version: 1.0.3</li>
+<li>status: dev</li>
+<li>author: hsz</li>
+<li>email: <a class="reference external" href="mailto:hsz1273327&#37;&#52;&#48;gmail&#46;com">hsz1273327<span>&#64;</span>gmail<span>&#46;</span>com</a></li>
+</ul>
+<div class="section" id="desc">
+<h2>Desc<a class="headerlink" href="#desc" title="Permalink to this headline">¶</a></h2>
+<p>a simple tool for score card model</p>
+<p>keywords:math,finance</p>
+</div>
+<div class="section" id="feature">
+<h2>Feature<a class="headerlink" href="#feature" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Serializable</li>
+</ul>
+</div>
+<div class="section" id="change">
+<h2>change<a class="headerlink" href="#change" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Discretization object now use str as the key instead of numpy’s str</li>
+<li>ScoreCardModel now have a different usecase</li>
+</ul>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">datasets</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.discretization</span> <span class="k">import</span> <span class="n">Discretization</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.weight_of_evidence</span> <span class="k">import</span> <span class="n">WeightOfEvidence</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.models.logistic_regression_model</span> <span class="k">import</span> <span class="n">LogisticRegressionModel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.score_card</span> <span class="k">import</span> <span class="n">ScoreCardModel</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyLR</span><span class="p">(</span><span class="n">LogisticRegressionModel</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_trade</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_proba</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">pre_trade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">v</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">t</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">_pre_trade_batch_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">row</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">bins</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">d</span> <span class="o">=</span> <span class="n">Discretization</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">d_row</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">woe</span> <span class="o">=</span> <span class="n">WeightOfEvidence</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">woe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">d_row</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="k">return</span> <span class="n">d</span><span class="p">,</span><span class="n">woe</span><span class="p">,</span><span class="n">woe</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">d_row</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">pre_trade_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">woes</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;sepal length (cm)&quot;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="s2">&quot;sepal length (cm)&quot;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sepal length (cm)&quot;</span><span class="p">]</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_trade_batch_row</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">X</span><span class="p">[</span><span class="s2">&quot;sepal length (cm)&quot;</span><span class="p">],</span><span class="n">Y</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">8</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;sepal width (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="s1">&#39;sepal width (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;sepal width (cm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_trade_batch_row</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">X</span><span class="p">[</span><span class="s1">&#39;sepal width (cm)&#39;</span><span class="p">],</span><span class="n">Y</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">2.5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mf">3.5</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;petal length (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="s1">&#39;petal length (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;petal length (cm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_trade_batch_row</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">X</span><span class="p">[</span><span class="s1">&#39;petal length (cm)&#39;</span><span class="p">],</span><span class="n">Y</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;petal width (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="s1">&#39;petal width (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;petal width (cm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_trade_batch_row</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">X</span><span class="p">[</span><span class="s1">&#39;petal width (cm)&#39;</span><span class="p">],</span><span class="n">Y</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iris</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">feature_names</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lr</span> <span class="o">=</span> <span class="n">MyLR</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lr</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+<span class="go">array([[ 0.46315882,  0.53684118]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span> <span class="o">=</span> <span class="n">ScoreCardModel</span><span class="p">(</span><span class="n">lr</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">pre_trade</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>
+<span class="go">104.3</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="install">
+<h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">ScoreCardModel</span></code></li>
+</ul>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">文档:</span></p>
+<p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="特征选择工具.html">特征选择工具</a></li>
-<li class="toctree-l1"><a class="reference internal" href="特征选择工具.html#">特征分布观察工具</a></li>
-<li class="toctree-l1"><a class="reference internal" href="特征选择工具.html#iv">利用iv值区分特征效果</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="特征选择工具.html#woe">扩展Woe类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ScoreCardModel.html">ScoreCardModel package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ScoreCardModel.html#module-ScoreCardModel">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ScoreCardModel.html#id1">评分卡模型</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.html#id2">模块设计:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.html#id3">依赖:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.html#id4">使用方法:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.html#id5">一个完整的例子:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.html#id6">模型序列化</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="评分卡工具.html">评分卡工具</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="评分卡工具.html#">评分卡实例化</a></li>
-<li class="toctree-l2"><a class="reference internal" href="评分卡工具.html#">评分卡训练</a></li>
-<li class="toctree-l2"><a class="reference internal" href="评分卡工具.html#">评分卡计算得分</a></li>
-<li class="toctree-l2"><a class="reference internal" href="评分卡工具.html#ks">评分卡观察ks曲线</a></li>
-<li class="toctree-l2"><a class="reference internal" href="评分卡工具.html#">扩展训练模型</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ScoreCardModel.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ScoreCardModel.mixins.html">ScoreCardModel.mixins package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.mixins.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.mixins.html#module-ScoreCardModel.mixins.serialize_mixin">ScoreCardModel.mixins.serialize_mixin module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.mixins.html#module-ScoreCardModel.mixins">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ScoreCardModel.models.html">ScoreCardModel.models package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.models.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.models.html#module-ScoreCardModel.models.logistic_regression_model">ScoreCardModel.models.logistic_regression_model module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.models.html#module-ScoreCardModel.models.meta">ScoreCardModel.models.meta module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.models.html#module-ScoreCardModel.models">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ScoreCardModel.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ScoreCardModel.html#module-ScoreCardModel.discretization">ScoreCardModel.discretization module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ScoreCardModel.html#id7">离散化连续数据</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.html#id8">使用方法:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ScoreCardModel.html#module-ScoreCardModel.score_card">ScoreCardModel.score_card module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ScoreCardModel.html#id9">评分卡</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.html#id10">计算公式:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.html#id11">使用方法:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ScoreCardModel.html#module-ScoreCardModel.weight_of_evidence">ScoreCardModel.weight_of_evidence module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ScoreCardModel.html#woe">计算Woe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.html#id12">触发概率</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.html#id13">woe</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.html#iv">iv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScoreCardModel.html#id14">使用方法:</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<ol class="last arabic simple">
-<li>加入更多的模型</li>
-<li>模型实例序列化</li>
-<li>模型实例服务化</li>
-</ol>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
@@ -92,7 +209,12 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">评分卡模型</a><ul>
+<li><a class="reference internal" href="#">Welcome to ScoreCardModel’s documentation!</a><ul>
+<li><a class="reference internal" href="#desc">Desc</a></li>
+<li><a class="reference internal" href="#feature">Feature</a></li>
+<li><a class="reference internal" href="#change">change</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#install">Install</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
@@ -101,7 +223,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
-      <li>Next: <a href="特征选择工具.html" title="next chapter">特征选择工具</a></li>
+      <li>Next: <a href="ScoreCardModel.html" title="next chapter">ScoreCardModel package</a></li>
   </ul></li>
 </ul>
 </div>
@@ -127,10 +249,10 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2017, hsz.
+      &copy;2017, 87.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

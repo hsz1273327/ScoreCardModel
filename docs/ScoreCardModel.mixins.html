@@ -1,0 +1,176 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ScoreCardModel.mixins package &#8212; ScoreCardModel  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ScoreCardModel.models package" href="ScoreCardModel.models.html" />
+    <link rel="prev" title="ScoreCardModel package" href="ScoreCardModel.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="scorecardmodel-mixins-package">
+<h1>ScoreCardModel.mixins package<a class="headerlink" href="#scorecardmodel-mixins-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ScoreCardModel.mixins.serialize_mixin">
+<span id="scorecardmodel-mixins-serialize-mixin-module"></span><h2>ScoreCardModel.mixins.serialize_mixin module<a class="headerlink" href="#module-ScoreCardModel.mixins.serialize_mixin" title="Permalink to this headline">¶</a></h2>
+<p>用于序列化Mixin,使用该Mixin的类可以用方法`obj.dumps()`来生成可以存储的一串字符串
+也可以用类方法`clz.loads(dump_str)`来获取一个该类的实例对象.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">dumps</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clz</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">dump_str</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="ScoreCardModel.mixins.serialize_mixin.SerializeMixin">
+<em class="property">class </em><code class="descclassname">ScoreCardModel.mixins.serialize_mixin.</code><code class="descname">SerializeMixin</code><a class="reference internal" href="_modules/ScoreCardModel/mixins/serialize_mixin.html#SerializeMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.mixins.serialize_mixin.SerializeMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>序列化模型Mixin</p>
+<dl class="method">
+<dt id="ScoreCardModel.mixins.serialize_mixin.SerializeMixin.dumps">
+<code class="descname">dumps</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/mixins/serialize_mixin.html#SerializeMixin.dumps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.mixins.serialize_mixin.SerializeMixin.dumps" title="Permalink to this definition">¶</a></dt>
+<dd><p>序列化模型</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li>序列化后的字符串,使用`dill`将对象序列化为bytes,再用`base64`将bytes转化为可以传输,可以存储的字符串.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ScoreCardModel.mixins.serialize_mixin.SerializeMixin.loads">
+<em class="property">classmethod </em><code class="descname">loads</code><span class="sig-paren">(</span><em>dump_str: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/mixins/serialize_mixin.html#SerializeMixin.loads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.mixins.serialize_mixin.SerializeMixin.loads" title="Permalink to this definition">¶</a></dt>
+<dd><p>反序列化模型</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dump_str</strong> (<em>str</em>) – <ul class="simple">
+<li>序列化后的字符串</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li>反序列化后返回该类型的实例对象</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">clz</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ScoreCardModel.mixins">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ScoreCardModel.mixins" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ScoreCardModel.mixins package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ScoreCardModel.mixins.serialize_mixin">ScoreCardModel.mixins.serialize_mixin module</a></li>
+<li><a class="reference internal" href="#module-ScoreCardModel.mixins">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="ScoreCardModel.html">ScoreCardModel package</a><ul>
+      <li>Previous: <a href="ScoreCardModel.html" title="previous chapter">ScoreCardModel package</a></li>
+      <li>Next: <a href="ScoreCardModel.models.html" title="next chapter">ScoreCardModel.models package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ScoreCardModel.mixins.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, 87.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/ScoreCardModel.mixins.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

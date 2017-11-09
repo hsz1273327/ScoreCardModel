@@ -1,0 +1,303 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ScoreCardModel.models package &#8212; ScoreCardModel  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="ScoreCardModel.mixins package" href="ScoreCardModel.mixins.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="scorecardmodel-models-package">
+<h1>ScoreCardModel.models package<a class="headerlink" href="#scorecardmodel-models-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ScoreCardModel.models.logistic_regression_model">
+<span id="scorecardmodel-models-logistic-regression-model-module"></span><h2>ScoreCardModel.models.logistic_regression_model module<a class="headerlink" href="#module-ScoreCardModel.models.logistic_regression_model" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="logistic">
+<h3>logistic回归模型<a class="headerlink" href="#logistic" title="Permalink to this headline">¶</a></h3>
+<p>基础分类器,广泛应用在工业领域.</p>
+<div class="section" id="id1">
+<h4>用法<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>由于数据进来格式千奇百怪,这个模型最好的用法是继承后重写
+<cite>predict</cite>,`pre_trade`,`pre_trade_batch`这几个方法,适当的也可以重写`train`方法.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyLR</span><span class="p">(</span><span class="n">LogisticRegressionModel</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_trade</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_proba</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">pre_trade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">v</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">t</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_pre_trade_batch_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">row</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">bins</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">Discretization</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+        <span class="n">d_row</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="n">woe</span> <span class="o">=</span> <span class="n">WeightOfEvidence</span><span class="p">()</span>
+        <span class="n">woe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">d_row</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">d</span><span class="p">,</span><span class="n">woe</span><span class="p">,</span><span class="n">woe</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">d_row</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">pre_trade_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">woes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;sepal length (cm)&quot;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="s2">&quot;sepal length (cm)&quot;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sepal length (cm)&quot;</span><span class="p">]</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_trade_batch_row</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">[</span><span class="s2">&quot;sepal length (cm)&quot;</span><span class="p">],</span><span class="n">Y</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">8</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;sepal width (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="s1">&#39;sepal width (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;sepal width (cm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_trade_batch_row</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">[</span><span class="s1">&#39;sepal width (cm)&#39;</span><span class="p">],</span><span class="n">Y</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">2.5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mf">3.5</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;petal length (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="s1">&#39;petal length (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;petal length (cm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_trade_batch_row</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">[</span><span class="s1">&#39;petal length (cm)&#39;</span><span class="p">],</span><span class="n">Y</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;petal width (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">woes</span><span class="p">[</span><span class="s1">&#39;petal width (cm)&#39;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;petal width (cm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_trade_batch_row</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">[</span><span class="s1">&#39;petal width (cm)&#39;</span><span class="p">],</span><span class="n">Y</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span>
+
+<span class="n">lr</span> <span class="o">=</span> <span class="n">MyLR</span><span class="p">()</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel">
+<em class="property">class </em><code class="descclassname">ScoreCardModel.models.logistic_regression_model.</code><code class="descname">LogisticRegressionModel</code><a class="reference internal" href="_modules/ScoreCardModel/models/logistic_regression_model.html#LogisticRegressionModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ScoreCardModel.models.meta.Model" title="ScoreCardModel.models.meta.Model"><code class="xref py py-class docutils literal"><span class="pre">ScoreCardModel.models.meta.Model</span></code></a>, <a class="reference internal" href="ScoreCardModel.mixins.html#ScoreCardModel.mixins.serialize_mixin.SerializeMixin" title="ScoreCardModel.mixins.serialize_mixin.SerializeMixin"><code class="xref py py-class docutils literal"><span class="pre">ScoreCardModel.mixins.serialize_mixin.SerializeMixin</span></code></a></p>
+<p>该类最好是继承了使用,继承后重写`predict`和`pre_trade`</p>
+<dl class="attribute">
+<dt id="ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.feature_order">
+<code class="descname">feature_order</code><a class="headerlink" href="#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.feature_order" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Sequence</em> –</p>
+<ul class="simple">
+<li>特征顺序</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel._model">
+<code class="descname">_model</code><a class="headerlink" href="#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel._model" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>sklearn.model</em> –</p>
+<ul class="simple">
+<li>训练出来的sklearn的分类器模型</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">feature_order</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.pre_trade">
+<code class="descname">pre_trade</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/models/logistic_regression_model.html#LogisticRegressionModel.pre_trade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.pre_trade" title="Permalink to this definition">¶</a></dt>
+<dd><p>“数据预处理,预测的时候由于输入未必是处理好的,因此需要先做下预处理</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.pre_trade_batch">
+<code class="descname">pre_trade_batch</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/models/logistic_regression_model.html#LogisticRegressionModel.pre_trade_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.pre_trade_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>批量数据预处理,训练的时候由于输入未必是处理好的,因此需要先做下预处理</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/models/logistic_regression_model.html#LogisticRegressionModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>预测用的接口,根据需求重写实现</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+<div class="section" id="module-ScoreCardModel.models.meta">
+<span id="scorecardmodel-models-meta-module"></span><h2>ScoreCardModel.models.meta module<a class="headerlink" href="#module-ScoreCardModel.models.meta" title="Permalink to this headline">¶</a></h2>
+<p>定义分类器模型的抽象基类</p>
+<dl class="class">
+<dt id="ScoreCardModel.models.meta.Model">
+<em class="property">class </em><code class="descclassname">ScoreCardModel.models.meta.</code><code class="descname">Model</code><a class="reference internal" href="_modules/ScoreCardModel/models/meta.html#Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.models.meta.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">abc.ABC</span></code></p>
+<p>模型的抽象类</p>
+<dl class="attribute">
+<dt id="ScoreCardModel.models.meta.Model.feature_order">
+<code class="descname">feature_order</code><em class="property"> = None</em><a class="headerlink" href="#ScoreCardModel.models.meta.Model.feature_order" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ScoreCardModel.models.meta.Model.pre_trade">
+<code class="descname">pre_trade</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/models/meta.html#Model.pre_trade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.models.meta.Model.pre_trade" title="Permalink to this definition">¶</a></dt>
+<dd><p>向量预处理</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ScoreCardModel.models.meta.Model.pre_trade_batch">
+<code class="descname">pre_trade_batch</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/models/meta.html#Model.pre_trade_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.models.meta.Model.pre_trade_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>全部数据预处理</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ScoreCardModel.models.meta.Model.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/models/meta.html#Model.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.models.meta.Model.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>输入一个特征向量预测</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ScoreCardModel.models.meta.Model.train">
+<code class="descname">train</code><span class="sig-paren">(</span><em>dataset</em>, <em>target</em>, <em>*</em>, <em>test_size=0.3</em>, <em>random_state=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/models/meta.html#Model.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.models.meta.Model.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>训练一组数据,输入必须是pandas的DataFrame</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dataset</strong> (<em>pandas.DataFrame</em>) – <ul>
+<li>训练用的DataFrame</li>
+</ul>
+</li>
+<li><strong>target</strong> (<em>Option</em><em>[</em><em>str</em><em>,</em><em>pandas.seri</em><em>]</em>) – <ul>
+<li>标签数据所在的列</li>
+</ul>
+</li>
+<li><strong>test_size</strong> (<em>float</em>) – <ul>
+<li>测试集比例</li>
+</ul>
+</li>
+<li><strong>random_state</strong> – <ul>
+<li>随机状态</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ScoreCardModel.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ScoreCardModel.models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>分类器模型<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>这个模块就是对sklearn的一些分类器做些封装.主要目的就是为了好序列化.`meta`模块定义了需要实现的接口.
+需要注意的是评分卡需要的是一个二分类的分类器.</p>
+<p>下面实现的分类器最好是继承了使用,一般需要重写`predict`,`pre_trade`,`pre_trade_batch`这几个方法,
+适当的也可以重写`train`方法</p>
+</div>
+<div class="section" id="id3">
+<h3>logistic回归分类器<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>最常见的分类器,书上也是用这个.好处是实现方便,运算快.坏处也就是对非线性数据表现比较差.
+因此最常见的使用方式就是连续数据离散化.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ScoreCardModel.models package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ScoreCardModel.models.logistic_regression_model">ScoreCardModel.models.logistic_regression_model module</a><ul>
+<li><a class="reference internal" href="#logistic">logistic回归模型</a><ul>
+<li><a class="reference internal" href="#id1">用法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ScoreCardModel.models.meta">ScoreCardModel.models.meta module</a></li>
+<li><a class="reference internal" href="#module-ScoreCardModel.models">Module contents</a><ul>
+<li><a class="reference internal" href="#id2">分类器模型</a></li>
+<li><a class="reference internal" href="#id3">logistic回归分类器</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="ScoreCardModel.html">ScoreCardModel package</a><ul>
+      <li>Previous: <a href="ScoreCardModel.mixins.html" title="previous chapter">ScoreCardModel.mixins package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ScoreCardModel.models.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, 87.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/ScoreCardModel.models.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

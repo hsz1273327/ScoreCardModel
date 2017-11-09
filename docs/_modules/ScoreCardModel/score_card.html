@@ -1,0 +1,157 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ScoreCardModel.score_card &#8212; ScoreCardModel  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ScoreCardModel.score_card</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;评分卡</span>
+<span class="sd">===============</span>
+
+<span class="sd">用于二分类问题通过模型预测的概率来计算得分</span>
+
+
+<span class="sd">计算公式:</span>
+<span class="sd">-----------------</span>
+
+<span class="sd">.. math:: factor = {\frac {p} {log(2)}}</span>
+<span class="sd">.. math:: offset = b - p \cdot {\frac {log(o)} {log(2)}}</span>
+<span class="sd">.. math:: odds = {\frac {p_t} {p_f}}</span>
+<span class="sd">.. math:: score = factor \cdot {log(odds)} + offset</span>
+
+<span class="sd">使用方法:</span>
+<span class="sd">------------</span>
+
+
+<span class="sd">&gt;&gt;&gt; sc = ScoreCardModel(model)</span>
+<span class="sd">&gt;&gt;&gt; sc.predict(sc.pre_trade(x))</span>
+
+<span class="sd">评分卡类默认会使用包装的分类器的`predict`和`pre_trade`方法,</span>
+<span class="sd">我们也可以适当的重写评分卡的这两个方法来满足业务要求.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.mixins.serialize_mixin</span> <span class="k">import</span> <span class="n">SerializeMixin</span>
+
+
+<div class="viewcode-block" id="ScoreCardModel"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardModel">[docs]</a><span class="k">class</span> <span class="nc">ScoreCardModel</span><span class="p">(</span><span class="n">SerializeMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    本模型需要使用一个已经训练好的分类器来初始化,预测,计算评分也都是依赖于它.</span>
+
+<span class="sd">    Attributes:</span>
+
+<span class="sd">        _model (ScoreCradModel.models.meta): - 训练好的预测模型</span>
+<span class="sd">        b (int): - 偏置量的常数项,用于作为基数</span>
+<span class="sd">        o (int): - 用于计算偏置量</span>
+<span class="sd">        p (int): - 用于计算偏置量和因数项</span>
+<span class="sd">        round_ (int): - 精度</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">round_</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">b</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">o</span> <span class="o">=</span> <span class="n">o</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">round_</span> <span class="o">=</span> <span class="n">round_</span>
+
+<div class="viewcode-block" id="ScoreCardModel.pre_trade"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardModel.pre_trade">[docs]</a>    <span class="k">def</span> <span class="nf">pre_trade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;数据预处理,预测的时候由于输入未必是处理好的,因此需要先做下预处理&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">pre_trade</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ScoreCardModel.predict"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardModel.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;用于预测某一条预处理过的特征向量得分的方法</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">            x (Sequence): - 用于分段的序列</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">            float: - 预测出来的分数</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">proba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_predict_proba</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">p_f</span><span class="p">,</span> <span class="n">p_t</span> <span class="o">=</span> <span class="n">proba</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">odds</span> <span class="o">=</span> <span class="n">p_t</span> <span class="o">/</span> <span class="n">p_f</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">odds</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">round_</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, 87.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

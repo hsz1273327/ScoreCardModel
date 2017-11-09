@@ -1,42 +1,30 @@
-.. ScoreCardModel documentation master file, created by
-   sphinx-quickstart on Tue Oct 31 09:31:22 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-Welcome to ScoreCardModel's documentation!
-==========================================
+# ScoreCardModel
 
-* version: 1.0.3
++ version: 1.0.3
++ status: dev
++ author: hsz
++ email: hsz1273327@gmail.com
 
-* status: dev
-
-* author: hsz
-
-* email: hsz1273327@gmail.com
-
-Desc
---------------------------------
+## Description
 
 a simple tool for score card model
 
 
 keywords:math,finance
 
+## Feature
 
-Feature
-----------------------
++ Serializable
 
-* Serializable
+## change
 
-change
----------------------
++ Discretization object now use str as the key instead of numpy's str
++ ScoreCardModel now have a different usecase
 
-* Discretization object now use str as the key instead of numpy's str
-* ScoreCardModel now have a different usecase
+## Example
 
-Example
--------------------------------
-
+```
 >>> from sklearn import datasets
 >>> import pandas as pd
 >>> from ScoreCardModel.discretization import Discretization
@@ -92,21 +80,13 @@ array([[ 0.46315882,  0.53684118]])
 104.3
 
 
-Install
---------------------------------
+````
 
-- ``python -m pip install ScoreCardModel``
+## Install
 
-.. toctree::
-   :maxdepth: 4
-   :caption: Contents:
-
-   ScoreCardModel
+`python -m pip install ScoreCardModel`
 
 
-Indices and tables
-==================
+## Documentation
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+Documentation on github page <https://data-science-tools.github.io/ScoreCardModel/>

@@ -1,6 +1,7 @@
-
 mkl
 numpy
 scipy
 scikit-learn
-matplotlib
+pandas
+cython
+dill

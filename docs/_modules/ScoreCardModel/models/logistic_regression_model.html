@@ -1,0 +1,232 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ScoreCardModel.models.logistic_regression_model &#8212; ScoreCardModel  documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ScoreCardModel.models.logistic_regression_model</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;logistic回归模型</span>
+<span class="sd">=========================</span>
+
+<span class="sd">基础分类器,广泛应用在工业领域.</span>
+
+
+<span class="sd">用法</span>
+<span class="sd">---------------------</span>
+
+<span class="sd">由于数据进来格式千奇百怪,这个模型最好的用法是继承后重写</span>
+<span class="sd">`predict`,`pre_trade`,`pre_trade_batch`这几个方法,适当的也可以重写`train`方法.</span>
+
+
+<span class="sd">.. code:: python</span>
+
+<span class="sd">    class MyLR(LogisticRegressionModel):</span>
+<span class="sd">        def predict(self, x):</span>
+<span class="sd">            x = self.pre_trade(x)</span>
+<span class="sd">            return self._predict_proba(x)</span>
+
+<span class="sd">        def pre_trade(self, x):</span>
+<span class="sd">            import numpy as np</span>
+<span class="sd">            result = []</span>
+<span class="sd">            for i, v in x.items():</span>
+<span class="sd">                t = self.ds[i].transform([v])[0]</span>
+<span class="sd">                r = self.woes[i].transform([t])[0]</span>
+<span class="sd">                result.append(r)</span>
+<span class="sd">            return np.array(result)</span>
+<span class="sd">        def _pre_trade_batch_row(self,row,Y,bins):</span>
+<span class="sd">            d = Discretization(bins)</span>
+<span class="sd">            d_row = d.transform(row)</span>
+<span class="sd">            woe = WeightOfEvidence()</span>
+<span class="sd">            woe.fit(d_row,Y)</span>
+<span class="sd">            return d,woe,woe.transform(d_row)</span>
+<span class="sd">        </span>
+<span class="sd">        def pre_trade_batch(self, X,Y):</span>
+<span class="sd">            self.ds = {}</span>
+<span class="sd">            self.woes = {}</span>
+<span class="sd">            self.table = {}</span>
+<span class="sd">            self.ds[&quot;sepal length (cm)&quot;],self.woes[&quot;sepal length (cm)&quot;],self.table[&quot;sepal length (cm)&quot;]= self._pre_trade_batch_row(</span>
+<span class="sd">                X[&quot;sepal length (cm)&quot;],Y,[0,2,5,8])</span>
+<span class="sd">            self.ds[&#39;sepal width (cm)&#39;],self.woes[&#39;sepal width (cm)&#39;],self.table[&#39;sepal width (cm)&#39;] = self._pre_trade_batch_row(</span>
+<span class="sd">                X[&#39;sepal width (cm)&#39;],Y,[0,2,2.5,3,3.5,5])</span>
+<span class="sd">            self.ds[&#39;petal length (cm)&#39;],self.woes[&#39;petal length (cm)&#39;],self.table[&#39;petal length (cm)&#39;] = self._pre_trade_batch_row(</span>
+<span class="sd">                X[&#39;petal length (cm)&#39;],Y,[0,1,2,3,4,5,7])</span>
+<span class="sd">            self.ds[&#39;petal width (cm)&#39;],self.woes[&#39;petal width (cm)&#39;],self.table[&#39;petal width (cm)&#39;] = self._pre_trade_batch_row(</span>
+<span class="sd">                X[&#39;petal width (cm)&#39;],Y,[0,1,2,3])</span>
+<span class="sd">            return pd.DataFrame(self.table)</span>
+
+<span class="sd">    lr = MyLR()</span>
+<span class="sd">    lr.train(l,z)</span>
+<span class="sd">    lr.predict(l.loc[0].to_dict())</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">.meta</span> <span class="k">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">..mixins.serialize_mixin</span> <span class="k">import</span> <span class="n">SerializeMixin</span>
+
+
+<div class="viewcode-block" id="LogisticRegressionModel"><a class="viewcode-back" href="../../../ScoreCardModel.models.html#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel">[docs]</a><span class="k">class</span> <span class="nc">LogisticRegressionModel</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">SerializeMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;该类最好是继承了使用,继承后重写`predict`和`pre_trade`</span>
+
+<span class="sd">    Attributes:</span>
+
+<span class="sd">         feature_order (Sequence): - 特征顺序</span>
+<span class="sd">         _model (sklearn.model): - 训练出来的sklearn的分类器模型</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">feature_order</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_model</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;二分类预测</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">            x (Sequence): - 用于预测的特征向量</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">            bool: - 返回0,1也就是False/True,True表示预测值为True,否则说明预测值为False</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="LogisticRegressionModel.predict"><a class="viewcode-back" href="../../../ScoreCardModel.models.html#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;预测用的接口,根据需求重写实现&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        不同预测值的概率</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">            x (Sequence): - 用于预测的特征向量</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">            float: - 预测值为False的概率</span>
+<span class="sd">            float: - 预测值为True的概率</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LogisticRegressionModel.pre_trade"><a class="viewcode-back" href="../../../ScoreCardModel.models.html#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.pre_trade">[docs]</a>    <span class="k">def</span> <span class="nf">pre_trade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;数据预处理,预测的时候由于输入未必是处理好的,因此需要先做下预处理&quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+        <span class="n">y_</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">l</span><span class="p">:</span> <span class="n">u</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">y__</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_order</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">y_</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                    <span class="n">y__</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    <span class="k">break</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y__</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="LogisticRegressionModel.pre_trade_batch"><a class="viewcode-back" href="../../../ScoreCardModel.models.html#ScoreCardModel.models.logistic_regression_model.LogisticRegressionModel.pre_trade_batch">[docs]</a>    <span class="k">def</span> <span class="nf">pre_trade_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;批量数据预处理,训练的时候由于输入未必是处理好的,因此需要先做下预处理&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_trade</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+    <span class="k">def</span> <span class="nf">_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_matrix</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;训练数据</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">            X_matrix (numpy.array): - 由训练数据组成的特征矩阵</span>
+<span class="sd">            y (numpy.array): - 特征数据对应的标签向量</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">            sklearn.model: - sklearn的模型</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
+        <span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_matrix</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lr</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, 87.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
