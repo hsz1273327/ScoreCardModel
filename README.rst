@@ -2,7 +2,7 @@
 ScoreCardModel
 ===============================
 
-* version: 1.0.3
+* version: 1.0.4
 
 * status: dev
 
@@ -86,6 +86,36 @@ array([[ 0.46315882,  0.53684118]])
 >>> sc = ScoreCardModel(lr)
 >>> sc.predict(sc.pre_trade(l.loc[0].to_dict()))
 104.3
+>>> scs = []
+>>> for i in range(len(l)):
+>>>    score = sc.predict(sc.pre_trade(l.loc[i].to_dict()))
+>>>    scs.append(score)
+>>> print(ScoreCardWithKSModel.Threshold_to_score(scs, 0.5))
+1.0
+>>> print(ScoreCardWithKSModel.Score_to_threshold(scs, score=70))
+1.0
+.
+.
+.
+>>> print(ScoreCardWithKSModel.Score_to_threshold(scs, y=z, score=100))
+0.3467
+>>> print(ScoreCardWithKSModel.Get_ks(scs, y=z, threshold=0.4).ks)
+0.9
+>>> # ScoreCardWithKSModel.Drawks(scs, y=z)
+>>> scsc = [l.loc[i].to_dict() for i in range(len(l))]
+>>> scks = ScoreCardWithKSModel.From_scorecard(sc)
+>>> print(scks.threshold_to_score(scsc, 0.5))
+1.0
+>>> print(scks.score_to_threshold(scsc, score=70))
+1.0
+.
+.
+.
+>>> print(scks.score_to_threshold(scsc, y=z, score=100))
+0.3467
+>>> print(scks.get_ks(scsc, y=z, threshold=0.4).ks)
+0.9
+>>> scks.drawks(scsc, y=z)
 
 
 Install

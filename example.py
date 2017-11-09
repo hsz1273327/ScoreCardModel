@@ -3,7 +3,7 @@ import pandas as pd
 from ScoreCardModel.discretization import Discretization
 from ScoreCardModel.weight_of_evidence import WeightOfEvidence
 from ScoreCardModel.models.logistic_regression_model import LogisticRegressionModel
-from ScoreCardModel.score_card import ScoreCardModel
+from ScoreCardModel.score_card import ScoreCardModel, ScoreCardWithKSModel
 
 
 class MyLR(LogisticRegressionModel):
@@ -49,5 +49,23 @@ l = pd.DataFrame(iris.data, columns=iris.feature_names)
 lr = MyLR()
 lr.train(l, z)
 print(lr.predict(l.loc[0].to_dict()))
-sc = ScoreCardModel(lr)
-print(sc.predict(l.loc[0].to_dict()))
+sc = ScoreCardModel(lr, round_=2)
+print(sc.predict(sc.pre_trade(l.loc[0].to_dict())))
+
+scs = []
+for i in range(len(l)):
+    score = sc.predict(sc.pre_trade(l.loc[i].to_dict()))
+    scs.append(score)
+
+print(ScoreCardWithKSModel.Threshold_to_score(scs, 0.5))
+print(ScoreCardWithKSModel.Score_to_threshold(scs, score=70))
+print(ScoreCardWithKSModel.Score_to_threshold(scs, y=z, score=100))
+print(ScoreCardWithKSModel.Get_ks(scs, y=z, threshold=0.4).ks)
+# ScoreCardWithKSModel.Drawks(scs, y=z)
+scsc = [l.loc[i].to_dict() for i in range(len(l))]
+scks = ScoreCardWithKSModel.From_scorecard(sc)
+print(scks.threshold_to_score(scsc, 0.5))
+print(scks.score_to_threshold(scsc, score=70))
+print(scks.score_to_threshold(scsc, y=z, score=100))
+print(scks.get_ks(scsc, y=z, threshold=0.4).ks)
+scks.drawks(scsc, y=z)

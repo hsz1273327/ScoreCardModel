@@ -66,6 +66,9 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">ks_2samp</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">classification_report</span><span class="p">,</span> <span class="n">precision_score</span>
 <span class="kn">from</span> <span class="nn">.mixins.serialize_mixin</span> <span class="k">import</span> <span class="n">SerializeMixin</span>
 
 
@@ -112,6 +115,192 @@
         <span class="n">p_f</span><span class="p">,</span> <span class="n">p_t</span> <span class="o">=</span> <span class="n">proba</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">odds</span> <span class="o">=</span> <span class="n">p_t</span> <span class="o">/</span> <span class="n">p_f</span>
         <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">odds</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">round_</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="KS"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.KS">[docs]</a><span class="k">class</span> <span class="nc">KS</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="n">good_bad_rate</span><span class="p">,</span> <span class="n">bad_rate</span><span class="p">,</span> <span class="n">good_rate</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ks</span> <span class="o">=</span> <span class="n">ks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">good_bad_rate</span> <span class="o">=</span> <span class="n">good_bad_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bad_rate</span> <span class="o">=</span> <span class="n">bad_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">good_rate</span> <span class="o">=</span> <span class="n">good_rate</span></div>
+
+
+<div class="viewcode-block" id="ScoreCardWithKSModel"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardWithKSModel">[docs]</a><span class="k">class</span> <span class="nc">ScoreCardWithKSModel</span><span class="p">(</span><span class="n">ScoreCardModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    本模型需要使用一个已经训练好的分类器来初始化.预测,计算评分也都是依赖于它.</span>
+<span class="sd">    它是ScoreCardModel的子类,并且可以用ScoreCardModel或者它的子类实例化.</span>
+<span class="sd">    这个类主要是新增了一些类方法.之所以弄个子类,是为了序列化的时候不用引入matplotlib作为依赖.</span>
+<span class="sd">    这个类更加合适离线使用,最好别用来序列化.</span>
+
+<span class="sd">    Attributes:</span>
+
+<span class="sd">        _model (ScoreCradModel.models.meta): - 训练好的预测模型</span>
+<span class="sd">        b (int): - 偏置量的常数项,用于作为基数</span>
+<span class="sd">        o (int): - 用于计算偏置量</span>
+<span class="sd">        p (int): - 用于计算偏置量和因数项</span>
+<span class="sd">        round_ (int): - 精度</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ScoreCardWithKSModel.From_scorecard"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardWithKSModel.From_scorecard">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">From_scorecard</span><span class="p">(</span><span class="n">clz</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">obj_n</span> <span class="o">=</span> <span class="n">clz</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">o</span><span class="p">,</span>
+                    <span class="n">p</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">round_</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">round_</span><span class="p">)</span>
+        <span class="n">obj_n</span><span class="o">.</span><span class="n">pre_trade</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">pre_trade</span>
+        <span class="n">obj_n</span><span class="o">.</span><span class="n">predict</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span>
+        <span class="k">return</span> <span class="n">obj_n</span></div>
+
+<div class="viewcode-block" id="ScoreCardWithKSModel.Threshold_to_score"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardWithKSModel.Threshold_to_score">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">Threshold_to_score</span><span class="p">(</span><span class="n">clz</span><span class="p">,</span> <span class="n">X_score</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;可以通过得分获取其在训练数据总体上的百分位数,并打印以此为阈值时的预测效果.</span>
+<span class="sd">        也可以通过得分获取其在某一个数据集上的百分位数.</span>
+
+<span class="sd">        Attributes:</span>
+
+<span class="sd">            X_score (Sequence[number]): - 预测的得分</span>
+<span class="sd">            threshold (float): - 阈值百分位数,0~1之间,按从大到小的顺序取值,0.1代表从大到小前10%</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">score_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X_score</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">-</span> <span class="n">threshold</span> <span class="o">*</span> <span class="mi">100</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">score_array</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ScoreCardWithKSModel.Score_to_threshold"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardWithKSModel.Score_to_threshold">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">Score_to_threshold</span><span class="p">(</span><span class="n">clz</span><span class="p">,</span> <span class="n">X_score</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">round_</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;可以通过得分获取其在训练数据总体上的百分位数,并打印以此为阈值时的预测效果.</span>
+<span class="sd">        也可以通过得分获取其在某一个数据集上的百分位数.</span>
+
+<span class="sd">        Attributes:</span>
+
+<span class="sd">            X_score (Sequence[number]): - 预测的得分</span>
+<span class="sd">            y (Sequence[number]): - 实际的标签,可以为空</span>
+<span class="sd">            score (number): - 阈值分,大于它的为T,否则为F</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">score_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X_score</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">precision_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">score_array</span> <span class="o">&gt;</span> <span class="n">score</span><span class="p">),</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">score_array</span> <span class="o">&gt;</span> <span class="n">score</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">score_array</span><span class="p">[</span><span class="n">score_array</span> <span class="o">&gt;</span> <span class="n">score</span><span class="p">])</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">score_array</span><span class="p">),</span>
+                     <span class="n">round_</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ScoreCardWithKSModel.Get_ks"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardWithKSModel.Get_ks">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">Get_ks</span><span class="p">(</span><span class="n">clz</span><span class="p">,</span> <span class="n">X_score</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">threshold_score</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;计算在某处时的ks值,可以是阈值百分位数,也可以是某个分数</span>
+
+<span class="sd">        Attributes:</span>
+
+<span class="sd">            X_score (Sequence[number]): - 预测的得分</span>
+<span class="sd">            y (Sequence[number]): - 实际的标签</span>
+<span class="sd">            threshold (float): - 阈值百分位数,默认为0.1也就是前10%</span>
+<span class="sd">            threshold_score (number): - 位置阈值分,取在它所在排序位置之前(包含这个分数的位置)的计算ks值</span>
+<span class="sd">            score (number): - 阈值分,大于等于它的是True,否贼是False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">org_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">X_score</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+        <span class="n">good_total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">bad_total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">y</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">ordered_data</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">org_data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">threshold_score</span><span class="p">:</span>
+            <span class="n">threshold_score</span> <span class="o">=</span> <span class="n">clz</span><span class="o">.</span><span class="n">Threshold_to_score</span><span class="p">(</span><span class="n">X_score</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+        <span class="n">filted_data_gen</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ordered_data</span> <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">threshold_score</span><span class="p">)</span>
+        <span class="n">target_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">filted_data_gen</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">_get_ks</span><span class="p">(</span><span class="n">y_true</span><span class="p">):</span>
+            <span class="n">good</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">[</span><span class="n">y_true</span> <span class="o">==</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">bad</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">[</span><span class="n">y_true</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">bad_rate</span> <span class="o">=</span> <span class="n">bad</span> <span class="o">/</span> <span class="n">bad_total</span>
+            <span class="n">good_rate</span> <span class="o">=</span> <span class="n">good</span> <span class="o">/</span> <span class="n">good_total</span>
+            <span class="n">ks</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">good_rate</span> <span class="o">-</span> <span class="n">bad_rate</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">good</span> <span class="o">+</span> <span class="n">bad</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">good_bad_rate</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">good_bad_rate</span> <span class="o">=</span> <span class="n">good</span> <span class="o">/</span> <span class="p">(</span><span class="n">good</span> <span class="o">+</span> <span class="n">bad</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">KS</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">good_bad_rate</span><span class="p">,</span> <span class="n">bad_rate</span><span class="p">,</span> <span class="n">good_rate</span><span class="p">)</span>
+        <span class="n">ks</span> <span class="o">=</span> <span class="n">_get_ks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">target_y</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ks</span></div>
+
+<div class="viewcode-block" id="ScoreCardWithKSModel.Drawks"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardWithKSModel.Drawks">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">Drawks</span><span class="p">(</span><span class="n">clz</span><span class="p">,</span> <span class="n">X_score</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;绘制ks曲线</span>
+
+<span class="sd">        Attributes:</span>
+
+<span class="sd">            X_score (Sequence[number]): - 预测的得分</span>
+<span class="sd">            y (Sequence[number]): - 实际的标签</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">Y_ks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">i</span> <span class="o">/</span> <span class="mi">100</span>
+            <span class="n">ks</span> <span class="o">=</span> <span class="n">clz</span><span class="o">.</span><span class="n">Get_ks</span><span class="p">(</span><span class="n">X_score</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">i</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+            <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">Y_ks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ks</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">good_rate</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Y_ks</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;good rat&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">bad_rate</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Y_ks</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;bad rat&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">ks</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Y_ks</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;KS&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">good_bad_rate</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Y_ks</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;good_bad&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper center&#39;</span><span class="p">),</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_calcul_X_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="n">X_score</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pre_trade</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">X_score</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">X_score</span>
+
+<div class="viewcode-block" id="ScoreCardWithKSModel.threshold_to_score"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardWithKSModel.threshold_to_score">[docs]</a>    <span class="k">def</span> <span class="nf">threshold_to_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;可以通过得分获取其在训练数据总体上的百分位数,并打印以此为阈值时的预测效果.</span>
+<span class="sd">        也可以通过得分获取其在某一个数据集上的百分位数.</span>
+
+<span class="sd">        Attributes:</span>
+
+<span class="sd">            X (pd.DateFrame): - 待预测特征数据</span>
+<span class="sd">            threshold (float): - 阈值百分位数,0~1之间,按从大到小的顺序取值,0.1代表从大到小前10%</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calcul_X_score</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">Threshold_to_score</span><span class="p">(</span><span class="n">X_score</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ScoreCardWithKSModel.score_to_threshold"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardWithKSModel.score_to_threshold">[docs]</a>    <span class="k">def</span> <span class="nf">score_to_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">round_</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;可以通过得分获取其在训练数据总体上的百分位数,并打印以此为阈值时的预测效果.</span>
+<span class="sd">        也可以通过得分获取其在某一个数据集上的百分位数.</span>
+
+<span class="sd">        Attributes:</span>
+
+<span class="sd">            X (pd.DateFrame): - 待预测特征数据</span>
+<span class="sd">            y (Sequence[number]): - 实际的标签,可以为空</span>
+<span class="sd">            score (number): - 阈值分,大于它的为T,否则为F</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calcul_X_score</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">Score_to_threshold</span><span class="p">(</span><span class="n">X_score</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="n">score</span><span class="p">,</span> <span class="n">round_</span><span class="o">=</span><span class="n">round_</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ScoreCardWithKSModel.get_ks"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardWithKSModel.get_ks">[docs]</a>    <span class="k">def</span> <span class="nf">get_ks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">threshold_score</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;计算在某处时的ks值,可以是阈值百分位数,也可以是某个分数</span>
+
+<span class="sd">        Attributes:</span>
+
+<span class="sd">            X (pd.DateFrame): - 待预测特征数据</span>
+<span class="sd">            y (Sequence[number]): - 实际的标签</span>
+<span class="sd">            threshold (float): - 阈值百分位数,默认为0.1也就是前10%</span>
+<span class="sd">            threshold_score (number): - 位置阈值分,取在它所在排序位置之前(包含这个分数的位置)的计算ks值</span>
+<span class="sd">            score (number): - 阈值分,大于等于它的是True,否贼是False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calcul_X_score</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">Get_ks</span><span class="p">(</span><span class="n">X_score</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">threshold_score</span><span class="o">=</span><span class="n">threshold_score</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ScoreCardWithKSModel.drawks"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardWithKSModel.drawks">[docs]</a>    <span class="k">def</span> <span class="nf">drawks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;绘制ks曲线</span>
+
+<span class="sd">        Attributes:</span>
+
+<span class="sd">            X (pd.DateFrame): - 待预测特征数据</span>
+<span class="sd">            y (Sequence[number]): - 实际的标签</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calcul_X_score</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">Drawks</span><span class="p">(</span><span class="n">X_score</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>

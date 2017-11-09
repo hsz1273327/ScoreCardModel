@@ -271,6 +271,12 @@
 <p>评分卡类默认会使用包装的分类器的`predict`和`pre_trade`方法,
 我们也可以适当的重写评分卡的这两个方法来满足业务要求.</p>
 <dl class="class">
+<dt id="ScoreCardModel.score_card.KS">
+<em class="property">class </em><code class="descclassname">ScoreCardModel.score_card.</code><code class="descname">KS</code><span class="sig-paren">(</span><em>ks</em>, <em>good_bad_rate</em>, <em>bad_rate</em>, <em>good_rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#KS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.KS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
 <dt id="ScoreCardModel.score_card.ScoreCardModel">
 <em class="property">class </em><code class="descclassname">ScoreCardModel.score_card.</code><code class="descname">ScoreCardModel</code><span class="sig-paren">(</span><em>model</em>, <em>b=100</em>, <em>o=1</em>, <em>p=20</em>, <em>round_=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ScoreCardModel.mixins.html#ScoreCardModel.mixins.serialize_mixin.SerializeMixin" title="ScoreCardModel.mixins.serialize_mixin.SerializeMixin"><code class="xref py py-class docutils literal"><span class="pre">ScoreCardModel.mixins.serialize_mixin.SerializeMixin</span></code></a></p>
@@ -348,6 +354,334 @@
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel">
+<em class="property">class </em><code class="descclassname">ScoreCardModel.score_card.</code><code class="descname">ScoreCardWithKSModel</code><span class="sig-paren">(</span><em>model</em>, <em>b=100</em>, <em>o=1</em>, <em>p=20</em>, <em>round_=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardWithKSModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ScoreCardModel.score_card.ScoreCardModel" title="ScoreCardModel.score_card.ScoreCardModel"><code class="xref py py-class docutils literal"><span class="pre">ScoreCardModel.score_card.ScoreCardModel</span></code></a></p>
+<p>本模型需要使用一个已经训练好的分类器来初始化.预测,计算评分也都是依赖于它.
+它是ScoreCardModel的子类,并且可以用ScoreCardModel或者它的子类实例化.
+这个类主要是新增了一些类方法.之所以弄个子类,是为了序列化的时候不用引入matplotlib作为依赖.
+这个类更加合适离线使用,最好别用来序列化.</p>
+<dl class="attribute">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel._model">
+<code class="descname">_model</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel._model" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>ScoreCradModel.models.meta</em> –</p>
+<ul class="simple">
+<li>训练好的预测模型</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.b">
+<code class="descname">b</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.b" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> –</p>
+<ul class="simple">
+<li>偏置量的常数项,用于作为基数</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.o">
+<code class="descname">o</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.o" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> –</p>
+<ul class="simple">
+<li>用于计算偏置量</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.p">
+<code class="descname">p</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.p" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> –</p>
+<ul class="simple">
+<li>用于计算偏置量和因数项</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.round_">
+<code class="descname">round_</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.round_" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> –</p>
+<ul class="simple">
+<li>精度</li>
+</ul>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.Drawks">
+<em class="property">classmethod </em><code class="descname">Drawks</code><span class="sig-paren">(</span><em>X_score</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardWithKSModel.Drawks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.Drawks" title="Permalink to this definition">¶</a></dt>
+<dd><p>绘制ks曲线</p>
+<dl class="attribute">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.X_score">
+<code class="descname">X_score</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.X_score" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Sequence[number]</em> –</p>
+<ul class="simple">
+<li>预测的得分</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.y">
+<code class="descname">y</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.y" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Sequence[number]</em> –</p>
+<ul class="simple">
+<li>实际的标签</li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.From_scorecard">
+<em class="property">classmethod </em><code class="descname">From_scorecard</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardWithKSModel.From_scorecard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.From_scorecard" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.Get_ks">
+<em class="property">classmethod </em><code class="descname">Get_ks</code><span class="sig-paren">(</span><em>X_score</em>, <em>y</em>, <em>*</em>, <em>threshold=0.1</em>, <em>threshold_score=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardWithKSModel.Get_ks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.Get_ks" title="Permalink to this definition">¶</a></dt>
+<dd><p>计算在某处时的ks值,可以是阈值百分位数,也可以是某个分数</p>
+<dl class="attribute">
+<dt>
+<code class="descname">X_score</code></dt>
+<dd><p><em>Sequence[number]</em> –</p>
+<ul class="simple">
+<li>预测的得分</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">y</code></dt>
+<dd><p><em>Sequence[number]</em> –</p>
+<ul class="simple">
+<li>实际的标签</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.threshold">
+<code class="descname">threshold</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> –</p>
+<ul class="simple">
+<li>阈值百分位数,默认为0.1也就是前10%</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.threshold_score">
+<code class="descname">threshold_score</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.threshold_score" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>number</em> –</p>
+<ul class="simple">
+<li>位置阈值分,取在它所在排序位置之前(包含这个分数的位置)的计算ks值</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.score">
+<code class="descname">score</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.score" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>number</em> –</p>
+<ul class="simple">
+<li>阈值分,大于等于它的是True,否贼是False</li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.Score_to_threshold">
+<em class="property">classmethod </em><code class="descname">Score_to_threshold</code><span class="sig-paren">(</span><em>X_score</em>, <em>*</em>, <em>y=None</em>, <em>score=100</em>, <em>round_=4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardWithKSModel.Score_to_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.Score_to_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>可以通过得分获取其在训练数据总体上的百分位数,并打印以此为阈值时的预测效果.
+也可以通过得分获取其在某一个数据集上的百分位数.</p>
+<dl class="attribute">
+<dt>
+<code class="descname">X_score</code></dt>
+<dd><p><em>Sequence[number]</em> –</p>
+<ul class="simple">
+<li>预测的得分</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">y</code></dt>
+<dd><p><em>Sequence[number]</em> –</p>
+<ul class="simple">
+<li>实际的标签,可以为空</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">score</code></dt>
+<dd><p><em>number</em> –</p>
+<ul class="simple">
+<li>阈值分,大于它的为T,否则为F</li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.Threshold_to_score">
+<em class="property">classmethod </em><code class="descname">Threshold_to_score</code><span class="sig-paren">(</span><em>X_score</em>, <em>threshold=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardWithKSModel.Threshold_to_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.Threshold_to_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>可以通过得分获取其在训练数据总体上的百分位数,并打印以此为阈值时的预测效果.
+也可以通过得分获取其在某一个数据集上的百分位数.</p>
+<dl class="attribute">
+<dt>
+<code class="descname">X_score</code></dt>
+<dd><p><em>Sequence[number]</em> –</p>
+<ul class="simple">
+<li>预测的得分</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">threshold</code></dt>
+<dd><p><em>float</em> –</p>
+<ul class="simple">
+<li>阈值百分位数,0~1之间,按从大到小的顺序取值,0.1代表从大到小前10%</li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.drawks">
+<code class="descname">drawks</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardWithKSModel.drawks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.drawks" title="Permalink to this definition">¶</a></dt>
+<dd><p>绘制ks曲线</p>
+<dl class="attribute">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.X">
+<code class="descname">X</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.X" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>pd.DateFrame</em> –</p>
+<ul class="simple">
+<li>待预测特征数据</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">y</code></dt>
+<dd><p><em>Sequence[number]</em> –</p>
+<ul class="simple">
+<li>实际的标签</li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.get_ks">
+<code class="descname">get_ks</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>*</em>, <em>threshold=0.1</em>, <em>threshold_score=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardWithKSModel.get_ks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.get_ks" title="Permalink to this definition">¶</a></dt>
+<dd><p>计算在某处时的ks值,可以是阈值百分位数,也可以是某个分数</p>
+<dl class="attribute">
+<dt>
+<code class="descname">X</code></dt>
+<dd><p><em>pd.DateFrame</em> –</p>
+<ul class="simple">
+<li>待预测特征数据</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">y</code></dt>
+<dd><p><em>Sequence[number]</em> –</p>
+<ul class="simple">
+<li>实际的标签</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">threshold</code></dt>
+<dd><p><em>float</em> –</p>
+<ul class="simple">
+<li>阈值百分位数,默认为0.1也就是前10%</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">threshold_score</code></dt>
+<dd><p><em>number</em> –</p>
+<ul class="simple">
+<li>位置阈值分,取在它所在排序位置之前(包含这个分数的位置)的计算ks值</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">score</code></dt>
+<dd><p><em>number</em> –</p>
+<ul class="simple">
+<li>阈值分,大于等于它的是True,否贼是False</li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.score_to_threshold">
+<code class="descname">score_to_threshold</code><span class="sig-paren">(</span><em>X</em>, <em>*</em>, <em>y=None</em>, <em>score=100</em>, <em>round_=4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardWithKSModel.score_to_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.score_to_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>可以通过得分获取其在训练数据总体上的百分位数,并打印以此为阈值时的预测效果.
+也可以通过得分获取其在某一个数据集上的百分位数.</p>
+<dl class="attribute">
+<dt>
+<code class="descname">X</code></dt>
+<dd><p><em>pd.DateFrame</em> –</p>
+<ul class="simple">
+<li>待预测特征数据</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">y</code></dt>
+<dd><p><em>Sequence[number]</em> –</p>
+<ul class="simple">
+<li>实际的标签,可以为空</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">score</code></dt>
+<dd><p><em>number</em> –</p>
+<ul class="simple">
+<li>阈值分,大于它的为T,否则为F</li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ScoreCardModel.score_card.ScoreCardWithKSModel.threshold_to_score">
+<code class="descname">threshold_to_score</code><span class="sig-paren">(</span><em>X</em>, <em>threshold=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardWithKSModel.threshold_to_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel.threshold_to_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>可以通过得分获取其在训练数据总体上的百分位数,并打印以此为阈值时的预测效果.
+也可以通过得分获取其在某一个数据集上的百分位数.</p>
+<dl class="attribute">
+<dt>
+<code class="descname">X</code></dt>
+<dd><p><em>pd.DateFrame</em> –</p>
+<ul class="simple">
+<li>待预测特征数据</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">threshold</code></dt>
+<dd><p><em>float</em> –</p>
+<ul class="simple">
+<li>阈值百分位数,0~1之间,按从大到小的顺序取值,0.1代表从大到小前10%</li>
+</ul>
+</dd></dl>
+
 </dd></dl>
 
 </dd></dl>
