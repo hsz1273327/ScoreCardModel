@@ -1,0 +1,186 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+AUTHOR	../setup.py	/^AUTHOR = 'hsz'$/;"	kind:variable	line:12
+AUTHOR_EMAIL	../setup.py	/^AUTHOR_EMAIL = 'hsz1273327@gmail.com'$/;"	kind:variable	line:13
+AutoStructify	../document\conf.py	/^from recommonmark.transform import AutoStructify$/;"	kind:namespace	line:6
+CLASSIFIERS	../setup.py	/^CLASSIFIERS = [$/;"	kind:variable	line:15
+CommonMarkParser	../document\conf.py	/^from recommonmark.parser import CommonMarkParser$/;"	kind:namespace	line:7
+DESCRIPTION	../setup.py	/^DESCRIPTION = 'simple tools for score card model'$/;"	kind:variable	line:10
+Discretization	../ScoreCardModel\discretization.py	/^class Discretization:$/;"	kind:class	line:22
+Discretization	../example.py	/^from ScoreCardModel.discretization import Discretization$/;"	kind:namespace	line:3
+Drawks	../ScoreCardModel\score_card.py	/^    def Drawks(clz, X_score, y):$/;"	kind:member	line:204
+From_scorecard	../ScoreCardModel\score_card.py	/^    def From_scorecard(clz, obj):$/;"	kind:member	line:128
+Get_ks	../ScoreCardModel\score_card.py	/^    def Get_ks(clz, X_score, y, *, threshold=0.1, threshold_score=None):$/;"	kind:member	line:169
+HERE	../setup.py	/^HERE = path.abspath(path.dirname(__file__))$/;"	kind:variable	line:27
+KEYWORDS	../setup.py	/^KEYWORDS = ["math", "finance"]$/;"	kind:variable	line:23
+KS	../ScoreCardModel\score_card.py	/^class KS:$/;"	kind:class	line:102
+LICENSE	../setup.py	/^LICENSE = 'MIT'$/;"	kind:variable	line:14
+LONG_DESCRIPTION	../setup.py	/^    LONG_DESCRIPTION = f.read()$/;"	kind:variable	line:29
+LogisticRegression	../ScoreCardModel\models\logistic_regression_model.py	/^        from sklearn.linear_model import LogisticRegression$/;"	kind:namespace	line:144
+LogisticRegressionModel	../ScoreCardModel\models\logistic_regression_model.py	/^class LogisticRegressionModel(Model, SerializeMixin):$/;"	kind:class	line:59
+LogisticRegressionModel	../example.py	/^from ScoreCardModel.models.logistic_regression_model import LogisticRegressionModel$/;"	kind:namespace	line:5
+Model	../ScoreCardModel\models\logistic_regression_model.py	/^from .meta import Model$/;"	kind:namespace	line:55
+Model	../ScoreCardModel\models\meta.py	/^class Model(abc.ABC):$/;"	kind:class	line:7
+MyLR	../example.py	/^class MyLR(LogisticRegressionModel):$/;"	kind:class	line:9
+PACKAGES	../setup.py	/^PACKAGES = find_packages(exclude=['contrib', 'docs', 'test'])$/;"	kind:variable	line:24
+PROJECTNAME	../setup.py	/^PROJECTNAME = 'ScoreCardModel'$/;"	kind:variable	line:8
+Path	../document\conf.py	/^from pathlib import Path$/;"	kind:namespace	line:4
+REQUIREMETS	../setup.py	/^    REQUIREMETS = f.readlines()$/;"	kind:variable	line:33
+REQUIREMETS_DEV	../setup.py	/^    REQUIREMETS_DEV = f.readlines()$/;"	kind:variable	line:36
+REQUIREMETS_DEV_FILE	../setup.py	/^REQUIREMETS_DEV_FILE = 'requirements_dev.txt'$/;"	kind:variable	line:5
+REQUIREMETS_DIR	../setup.py	/^REQUIREMETS_DIR = path.join(HERE, "requirements")$/;"	kind:variable	line:30
+REQUIREMETS_FILE	../setup.py	/^REQUIREMETS_FILE = 'requirements.txt'$/;"	kind:variable	line:7
+REQUIREMETS_TEST	../setup.py	/^    REQUIREMETS_TEST = f.readlines()$/;"	kind:variable	line:39
+REQUIREMETS_TEST_FILE	../setup.py	/^REQUIREMETS_TEST_FILE = 'requirements_test.txt'$/;"	kind:variable	line:6
+ScoreCardModel	../ScoreCardModel\score_card.py	/^class ScoreCardModel(SerializeMixin):$/;"	kind:class	line:57
+ScoreCardModel	../example.py	/^from ScoreCardModel.score_card import ScoreCardModel, ScoreCardWithKSModel$/;"	kind:namespace	line:6
+ScoreCardWithKSModel	../ScoreCardModel\score_card.py	/^class ScoreCardWithKSModel(ScoreCardModel):$/;"	kind:class	line:110
+ScoreCardWithKSModel	../example.py	/^from ScoreCardModel.score_card import ScoreCardModel, ScoreCardWithKSModel$/;"	kind:namespace	line:6
+Score_to_threshold	../ScoreCardModel\score_card.py	/^    def Score_to_threshold(clz, X_score, *, y=None, score=100, round_=4):$/;"	kind:member	line:150
+SerializeMixin	../ScoreCardModel\mixins\serialize_mixin.py	/^class SerializeMixin:$/;"	kind:class	line:13
+SerializeMixin	../ScoreCardModel\models\logistic_regression_model.py	/^from ..mixins.serialize_mixin import SerializeMixin$/;"	kind:namespace	line:56
+SerializeMixin	../ScoreCardModel\score_card.py	/^from .mixins.serialize_mixin import SerializeMixin$/;"	kind:namespace	line:54
+Threshold_to_score	../ScoreCardModel\score_card.py	/^    def Threshold_to_score(clz, X_score, threshold=0.2):$/;"	kind:member	line:136
+URL	../setup.py	/^URL = 'https:\/\/data-science-tools.github.io\/ScoreCardModel\/'$/;"	kind:variable	line:11
+VERSION	../setup.py	/^VERSION = '1.0.4'$/;"	kind:variable	line:9
+WeightOfEvidence	../ScoreCardModel\weight_of_evidence.py	/^class WeightOfEvidence:$/;"	kind:class	line:70
+WeightOfEvidence	../example.py	/^from ScoreCardModel.weight_of_evidence import WeightOfEvidence$/;"	kind:namespace	line:4
+ZIP_SAFE	../setup.py	/^ZIP_SAFE = True$/;"	kind:variable	line:25
+__init__	../ScoreCardModel\discretization.py	/^    def __init__(self, bins):$/;"	kind:member	line:31
+__init__	../ScoreCardModel\score_card.py	/^    def __init__(self, ks, good_bad_rate, bad_rate, good_rate):$/;"	kind:member	line:103
+__init__	../ScoreCardModel\score_card.py	/^    def __init__(self, model, b=100, o=1, p=20, round_=1):$/;"	kind:member	line:71
+__init__	../ScoreCardModel\weight_of_evidence.py	/^    def __init__(self):$/;"	kind:member	line:79
+__init__.py	../ScoreCardModel\__init__.py	1;"	kind:file	line:1
+__init__.py	../ScoreCardModel\binning\__init__.py	1;"	kind:file	line:1
+__init__.py	../ScoreCardModel\mixins\__init__.py	1;"	kind:file	line:1
+__init__.py	../ScoreCardModel\models\__init__.py	1;"	kind:file	line:1
+_calcul_X_score	../ScoreCardModel\score_card.py	/^    def _calcul_X_score(self, X):$/;"	kind:member	line:229
+_get_ks	../ScoreCardModel\score_card.py	/^        def _get_ks(y_true):$/;"	kind:function	line:189
+_model	../ScoreCardModel\models\logistic_regression_model.py	/^    _model = None$/;"	kind:variable	line:70
+_model	../ScoreCardModel\models\meta.py	/^    _model = None$/;"	kind:variable	line:10
+_posibility	../ScoreCardModel\weight_of_evidence.py	/^    def _posibility(self, x, tag, event=1):$/;"	kind:member	line:83
+_pre_trade_batch_row	../example.py	/^    def _pre_trade_batch_row(self, row, Y, bins):$/;"	kind:member	line:23
+_predict	../ScoreCardModel\models\logistic_regression_model.py	/^    def _predict(self, x):$/;"	kind:member	line:72
+_predict_proba	../ScoreCardModel\models\logistic_regression_model.py	/^    def _predict_proba(self, x):$/;"	kind:member	line:92
+_train	../ScoreCardModel\models\logistic_regression_model.py	/^    def _train(self, X_matrix, y, **kwargs):$/;"	kind:member	line:130
+_train	../ScoreCardModel\models\meta.py	/^    def _train(self, dataset, target, **kwargs):$/;"	kind:member	line:35
+abc	../ScoreCardModel\models\meta.py	/^import abc$/;"	kind:namespace	line:4
+author	../document\conf.py	/^author = '87'$/;"	kind:variable	line:28
+author	../setup.py	/^    author=AUTHOR,$/;"	kind:variable	line:47
+author_email	../setup.py	/^    author_email=AUTHOR_EMAIL,$/;"	kind:variable	line:48
+base64	../ScoreCardModel\mixins\serialize_mixin.py	/^import base64$/;"	kind:namespace	line:10
+classification_report	../ScoreCardModel\models\meta.py	/^        from sklearn.metrics import classification_report, precision_score$/;"	kind:namespace	line:54
+classification_report	../ScoreCardModel\score_card.py	/^from sklearn.metrics import classification_report, precision_score$/;"	kind:namespace	line:53
+classifiers	../setup.py	/^    classifiers=CLASSIFIERS,$/;"	kind:variable	line:50
+conf.py	../document\conf.py	1;"	kind:file	line:1
+copyright	../document\conf.py	/^copyright = '2017, 87'$/;"	kind:variable	line:27
+data_files	../setup.py	/^    data_files=[('requirements', ['requirements\/requirements.txt',$/;"	kind:variable	line:60
+datasets	../example.py	/^from sklearn import datasets$/;"	kind:namespace	line:1
+description	../setup.py	/^    description=DESCRIPTION,$/;"	kind:variable	line:44
+dill	../ScoreCardModel\mixins\serialize_mixin.py	/^import dill$/;"	kind:namespace	line:9
+discretization.py	../ScoreCardModel\discretization.py	1;"	kind:file	line:1
+drawks	../ScoreCardModel\score_card.py	/^    def drawks(self, X, y):$/;"	kind:member	line:275
+dumps	../ScoreCardModel\mixins\serialize_mixin.py	/^    def dumps(self):$/;"	kind:member	line:17
+epub_author	../document\conf.py	/^epub_author = author$/;"	kind:variable	line:69
+epub_copyright	../document\conf.py	/^epub_copyright = copyright$/;"	kind:variable	line:71
+epub_exclude_files	../document\conf.py	/^epub_exclude_files = ['search.html']$/;"	kind:variable	line:73
+epub_publisher	../document\conf.py	/^epub_publisher = author$/;"	kind:variable	line:70
+epub_title	../document\conf.py	/^epub_title = project$/;"	kind:variable	line:68
+example.py	../example.py	1;"	kind:file	line:1
+exclude_patterns	../document\conf.py	/^exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']$/;"	kind:variable	line:36
+extensions	../document\conf.py	/^extensions = ['sphinx.ext.autodoc',$/;"	kind:variable	line:11
+extras_require	../setup.py	/^    extras_require={$/;"	kind:variable	line:55
+feature_order	../ScoreCardModel\models\logistic_regression_model.py	/^    feature_order = None$/;"	kind:variable	line:69
+feature_order	../ScoreCardModel\models\meta.py	/^    feature_order = None$/;"	kind:variable	line:11
+find_packages	../setup.py	/^from setuptools import setup, find_packages$/;"	kind:namespace	line:2
+fit	../ScoreCardModel\weight_of_evidence.py	/^    def fit(self, x, y, *, event=1, woe_min=-20, woe_max=20):$/;"	kind:member	line:116
+get_ks	../ScoreCardModel\score_card.py	/^    def get_ks(self, X, y, *, threshold=0.1, threshold_score=None):$/;"	kind:member	line:261
+html_static_path	../document\conf.py	/^html_static_path = ['_static']$/;"	kind:variable	line:44
+html_theme	../document\conf.py	/^html_theme = 'alabaster'$/;"	kind:variable	line:42
+htmlhelp_basename	../document\conf.py	/^htmlhelp_basename = 'score_card_modeldoc'$/;"	kind:variable	line:46
+include_package_data	../setup.py	/^    include_package_data=True,$/;"	kind:variable	line:53
+install_requires	../setup.py	/^    install_requires=REQUIREMETS,$/;"	kind:variable	line:54
+iris	../example.py	/^iris = datasets.load_iris()$/;"	kind:variable	line:45
+keywords	../setup.py	/^    keywords=KEYWORDS,$/;"	kind:variable	line:51
+ks_2samp	../ScoreCardModel\score_card.py	/^from scipy.stats import ks_2samp$/;"	kind:namespace	line:52
+l	../example.py	/^l = pd.DataFrame(iris.data, columns=iris.feature_names)$/;"	kind:variable	line:48
+language	../document\conf.py	/^language = 'en'$/;"	kind:variable	line:34
+latex_documents	../document\conf.py	/^latex_documents = [$/;"	kind:variable	line:52
+latex_elements	../document\conf.py	/^latex_elements = {$/;"	kind:variable	line:48
+license	../setup.py	/^    license=LICENSE,$/;"	kind:variable	line:49
+loads	../ScoreCardModel\mixins\serialize_mixin.py	/^    def loads(clz, dump_str: str):$/;"	kind:member	line:28
+logistic_regression_model.py	../ScoreCardModel\models\logistic_regression_model.py	1;"	kind:file	line:1
+long_description	../setup.py	/^    long_description=LONG_DESCRIPTION,$/;"	kind:variable	line:45
+lr	../example.py	/^lr = MyLR()$/;"	kind:variable	line:49
+man_pages	../document\conf.py	/^man_pages = [$/;"	kind:variable	line:57
+master_doc	../document\conf.py	/^master_doc = 'index'$/;"	kind:variable	line:24
+matplotlib	../ScoreCardModel\score_card.py	/^        import matplotlib.pyplot as plt$/;"	kind:namespace	line:212
+meta.py	../ScoreCardModel\models\meta.py	1;"	kind:file	line:1
+name	../setup.py	/^    name=PROJECTNAME,$/;"	kind:variable	line:42
+np	../ScoreCardModel\discretization.py	/^import numpy as np$/;"	kind:namespace	line:18
+np	../ScoreCardModel\models\logistic_regression_model.py	/^        import numpy as np$/;"	kind:namespace	line:111
+np	../ScoreCardModel\score_card.py	/^import numpy as np$/;"	kind:namespace	line:50
+np	../ScoreCardModel\weight_of_evidence.py	/^import numpy as np$/;"	kind:namespace	line:66
+np	../example.py	/^        import numpy as np$/;"	kind:namespace	line:15
+open	../setup.py	/^from codecs import open$/;"	kind:namespace	line:1
+os	../document\conf.py	/^import os$/;"	kind:namespace	line:2
+p	../document\conf.py	/^p = Path(__file__).absolute()$/;"	kind:variable	line:8
+packages	../setup.py	/^    packages=PACKAGES,$/;"	kind:variable	line:52
+path	../setup.py	/^from os import path$/;"	kind:namespace	line:3
+pd	../ScoreCardModel\discretization.py	/^import pandas as pd$/;"	kind:namespace	line:19
+pd	../ScoreCardModel\score_card.py	/^import pandas as pd$/;"	kind:namespace	line:51
+pd	../example.py	/^import pandas as pd$/;"	kind:namespace	line:2
+plt	../ScoreCardModel\score_card.py	/^        import matplotlib.pyplot as plt$/;"	kind:namespace	line:212
+pre_trade	../ScoreCardModel\models\logistic_regression_model.py	/^    def pre_trade(self, x):$/;"	kind:member	line:109
+pre_trade	../ScoreCardModel\models\meta.py	/^    def pre_trade(self, x):$/;"	kind:member	line:21
+pre_trade	../ScoreCardModel\score_card.py	/^    def pre_trade(self, x):$/;"	kind:member	line:78
+pre_trade	../example.py	/^    def pre_trade(self, x):$/;"	kind:member	line:14
+pre_trade_batch	../ScoreCardModel\models\logistic_regression_model.py	/^    def pre_trade_batch(self, X):$/;"	kind:member	line:123
+pre_trade_batch	../ScoreCardModel\models\meta.py	/^    def pre_trade_batch(self, x, y):$/;"	kind:member	line:28
+pre_trade_batch	../example.py	/^    def pre_trade_batch(self, X, Y):$/;"	kind:member	line:30
+precision_score	../ScoreCardModel\models\meta.py	/^        from sklearn.metrics import classification_report, precision_score$/;"	kind:namespace	line:54
+precision_score	../ScoreCardModel\score_card.py	/^from sklearn.metrics import classification_report, precision_score$/;"	kind:namespace	line:53
+predict	../ScoreCardModel\models\logistic_regression_model.py	/^    def predict(self, x):$/;"	kind:member	line:88
+predict	../ScoreCardModel\models\meta.py	/^    def predict(self, x):$/;"	kind:member	line:14
+predict	../ScoreCardModel\score_card.py	/^    def predict(self, x):$/;"	kind:member	line:82
+predict	../example.py	/^    def predict(self, x):$/;"	kind:member	line:10
+project	../document\conf.py	/^project = 'ScoreCardModel'$/;"	kind:variable	line:26
+pygments_style	../document\conf.py	/^pygments_style = 'sphinx'$/;"	kind:variable	line:38
+recommonmark	../document\conf.py	/^import recommonmark$/;"	kind:namespace	line:5
+release	../document\conf.py	/^release = ''$/;"	kind:variable	line:32
+sc	../example.py	/^sc = ScoreCardModel(lr, round_=2)$/;"	kind:variable	line:52
+scks	../example.py	/^scks = ScoreCardWithKSModel.From_scorecard(sc)$/;"	kind:variable	line:66
+score	../example.py	/^    score = sc.predict(sc.pre_trade(l.loc[i].to_dict()))$/;"	kind:variable	line:57
+score_card.py	../ScoreCardModel\score_card.py	1;"	kind:file	line:1
+score_to_threshold	../ScoreCardModel\score_card.py	/^    def score_to_threshold(self, X, *, y=None, score=100, round_=4):$/;"	kind:member	line:248
+scs	../example.py	/^scs = []$/;"	kind:variable	line:55
+scsc	../example.py	/^scsc = [l.loc[i].to_dict() for i in range(len(l))]$/;"	kind:variable	line:65
+serialize_mixin.py	../ScoreCardModel\mixins\serialize_mixin.py	1;"	kind:file	line:1
+setup	../document\conf.py	/^def setup(app):$/;"	kind:function	line:77
+setup	../setup.py	/^from setuptools import setup, find_packages$/;"	kind:namespace	line:2
+setup.py	../setup.py	1;"	kind:file	line:1
+source_parsers	../document\conf.py	/^source_parsers = {$/;"	kind:variable	line:19
+source_suffix	../document\conf.py	/^source_suffix = ['.rst', '.md']$/;"	kind:variable	line:22
+sys	../document\conf.py	/^import sys$/;"	kind:namespace	line:3
+templates_path	../document\conf.py	/^templates_path = ['_templates']$/;"	kind:variable	line:17
+texinfo_documents	../document\conf.py	/^texinfo_documents = [$/;"	kind:variable	line:62
+threshold_to_score	../ScoreCardModel\score_card.py	/^    def threshold_to_score(self, X, threshold=0.2):$/;"	kind:member	line:236
+todo_include_todos	../document\conf.py	/^todo_include_todos = True$/;"	kind:variable	line:40
+todo_include_todos	../document\conf.py	/^todo_include_todos = True$/;"	kind:variable	line:75
+train	../ScoreCardModel\models\meta.py	/^    def train(self, dataset, target, *, test_size=0.3, random_state=0, **kwargs):$/;"	kind:member	line:41
+train_test_split	../ScoreCardModel\models\meta.py	/^        from sklearn.model_selection import train_test_split$/;"	kind:namespace	line:53
+transform	../ScoreCardModel\discretization.py	/^    def transform(self, x):$/;"	kind:member	line:34
+transform	../ScoreCardModel\weight_of_evidence.py	/^    def transform(self, X):$/;"	kind:member	line:143
+type_of_target	../ScoreCardModel\weight_of_evidence.py	/^from sklearn.utils.multiclass import type_of_target$/;"	kind:namespace	line:67
+url	../setup.py	/^    url=URL,$/;"	kind:variable	line:46
+url_doc_root	../document\conf.py	/^url_doc_root = "xxxx"#$/;"	kind:variable	line:76
+version	../document\conf.py	/^version = '1.0.4'$/;"	kind:variable	line:30
+version	../setup.py	/^    version=VERSION,$/;"	kind:variable	line:43
+weight_of_evidence.py	../ScoreCardModel\weight_of_evidence.py	1;"	kind:file	line:1
+y	../example.py	/^y = iris.target$/;"	kind:variable	line:46
+z	../example.py	/^z = (y == 0)$/;"	kind:variable	line:47
+zip_safe	../setup.py	/^    zip_safe=ZIP_SAFE,$/;"	kind:variable	line:59

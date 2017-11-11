@@ -1,7 +1,7 @@
 
 # ScoreCardModel
 
-+ version: 1.0.4
++ version: 1.0.5
 + status: dev
 + author: hsz
 + email: hsz1273327@gmail.com
@@ -27,7 +27,7 @@ keywords:math,finance
 ```
 >>> from sklearn import datasets
 >>> import pandas as pd
->>> from ScoreCardModel.discretization import Discretization
+>>> from ScoreCardModel.binning.discretization import Discretization
 >>> from ScoreCardModel.weight_of_evidence import WeightOfEvidence
 >>> from ScoreCardModel.models.logistic_regression_model import LogisticRegressionModel
 >>> from ScoreCardModel.score_card import ScoreCardModel
