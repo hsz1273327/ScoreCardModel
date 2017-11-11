@@ -52,7 +52,7 @@
 >>> from ScoreCardModel.discretization import Discretization
 >>> from ScoreCardModel.weight_of_evidence import WeightOfEvidence
 >>> from ScoreCardModel.models.logistic_regression_model import LogisticRegressionModel
->>> from ScoreCardModel.score_card import ScoreCardModel
+>>> from ScoreCardModel.binning.score_card import ScoreCardModel
 >>>
 >>> class MyLR(LogisticRegressionModel):
 >>>     def predict(self, x):
