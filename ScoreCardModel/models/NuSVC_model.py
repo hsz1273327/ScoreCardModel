@@ -1,14 +1,17 @@
-"""logistic回归模型
+"""支持向量分类器模型
 =========================
 
-基础分类器,广泛应用在工业领域.
+基本的nu-svc支持向量机分类器,用法和logistic回归类似.
 
+nu-svc中nu的范围是0到1，nu是错分样本所占比例的上界，支持向量所占比列的下界。
 
 用法
 ---------------------
 
 由于数据进来格式千奇百怪,这个模型最好的用法是继承后重写
 `predict`,`pre_trade`,`pre_trade_batch`这几个方法,适当的也可以重写`train`方法.
+
+不过一般来说神经网络不要求分箱.
 
 
 .. code:: python
@@ -56,7 +59,7 @@ from .meta import Model
 from ..mixins.serialize_mixin import SerializeMixin
 
 
-class LogisticRegressionModel(Model, SerializeMixin):
+class NuSVCModel(Model, SerializeMixin):
     """该类最好是继承了使用,继承后重写`predict`和`pre_trade`
 
     Attributes:
@@ -141,7 +144,7 @@ class LogisticRegressionModel(Model, SerializeMixin):
 
 
         """
-        from sklearn.linear_model import LogisticRegression
-        model = LogisticRegression(**kwargs)
+        from sklearn.svm import NuSVC
+        model = NuSVC(**kwargs)
         model.fit(X_matrix, y)
         return model

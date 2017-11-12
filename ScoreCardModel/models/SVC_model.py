@@ -1,14 +1,16 @@
-"""logistic回归模型
+"""支持向量分类器模型
 =========================
 
-基础分类器,广泛应用在工业领域.
-
+基本的支持向量机分类器c-svc,用法和logistic回归类似.
+c-svc中c的范围是1到正无穷
 
 用法
 ---------------------
 
 由于数据进来格式千奇百怪,这个模型最好的用法是继承后重写
 `predict`,`pre_trade`,`pre_trade_batch`这几个方法,适当的也可以重写`train`方法.
+
+不过一般来说神经网络不要求分箱.
 
 
 .. code:: python
@@ -56,7 +58,7 @@ from .meta import Model
 from ..mixins.serialize_mixin import SerializeMixin
 
 
-class LogisticRegressionModel(Model, SerializeMixin):
+class SVCModel(Model, SerializeMixin):
     """该类最好是继承了使用,继承后重写`predict`和`pre_trade`
 
     Attributes:
@@ -141,7 +143,7 @@ class LogisticRegressionModel(Model, SerializeMixin):
 
 
         """
-        from sklearn.linear_model import LogisticRegression
-        model = LogisticRegression(**kwargs)
+        from sklearn.svm import SVC
+        model = SVC(**kwargs)
         model.fit(X_matrix, y)
         return model

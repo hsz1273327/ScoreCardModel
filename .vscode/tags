@@ -10,8 +10,8 @@ AutoStructify	../document\conf.py	/^from recommonmark.transform import AutoStruc
 CLASSIFIERS	../setup.py	/^CLASSIFIERS = [$/;"	kind:variable	line:15
 CommonMarkParser	../document\conf.py	/^from recommonmark.parser import CommonMarkParser$/;"	kind:namespace	line:7
 DESCRIPTION	../setup.py	/^DESCRIPTION = 'simple tools for score card model'$/;"	kind:variable	line:10
-Discretization	../ScoreCardModel\discretization.py	/^class Discretization:$/;"	kind:class	line:22
-Discretization	../example.py	/^from ScoreCardModel.discretization import Discretization$/;"	kind:namespace	line:3
+Discretization	../ScoreCardModel\binning\discretization.py	/^class Discretization:$/;"	kind:class	line:22
+Discretization	../example.py	/^from ScoreCardModel.binning.discretization import Discretization$/;"	kind:namespace	line:3
 Drawks	../ScoreCardModel\score_card.py	/^    def Drawks(clz, X_score, y):$/;"	kind:member	line:204
 From_scorecard	../ScoreCardModel\score_card.py	/^    def From_scorecard(clz, obj):$/;"	kind:member	line:128
 Get_ks	../ScoreCardModel\score_card.py	/^    def Get_ks(clz, X_score, y, *, threshold=0.1, threshold_score=None):$/;"	kind:member	line:169
@@ -46,11 +46,11 @@ SerializeMixin	../ScoreCardModel\models\logistic_regression_model.py	/^from ..mi
 SerializeMixin	../ScoreCardModel\score_card.py	/^from .mixins.serialize_mixin import SerializeMixin$/;"	kind:namespace	line:54
 Threshold_to_score	../ScoreCardModel\score_card.py	/^    def Threshold_to_score(clz, X_score, threshold=0.2):$/;"	kind:member	line:136
 URL	../setup.py	/^URL = 'https:\/\/data-science-tools.github.io\/ScoreCardModel\/'$/;"	kind:variable	line:11
-VERSION	../setup.py	/^VERSION = '1.0.4'$/;"	kind:variable	line:9
+VERSION	../setup.py	/^VERSION = '1.0.5'$/;"	kind:variable	line:9
 WeightOfEvidence	../ScoreCardModel\weight_of_evidence.py	/^class WeightOfEvidence:$/;"	kind:class	line:70
 WeightOfEvidence	../example.py	/^from ScoreCardModel.weight_of_evidence import WeightOfEvidence$/;"	kind:namespace	line:4
 ZIP_SAFE	../setup.py	/^ZIP_SAFE = True$/;"	kind:variable	line:25
-__init__	../ScoreCardModel\discretization.py	/^    def __init__(self, bins):$/;"	kind:member	line:31
+__init__	../ScoreCardModel\binning\discretization.py	/^    def __init__(self, bins):$/;"	kind:member	line:31
 __init__	../ScoreCardModel\score_card.py	/^    def __init__(self, ks, good_bad_rate, bad_rate, good_rate):$/;"	kind:member	line:103
 __init__	../ScoreCardModel\score_card.py	/^    def __init__(self, model, b=100, o=1, p=20, round_=1):$/;"	kind:member	line:71
 __init__	../ScoreCardModel\weight_of_evidence.py	/^    def __init__(self):$/;"	kind:member	line:79
@@ -82,7 +82,7 @@ data_files	../setup.py	/^    data_files=[('requirements', ['requirements\/requir
 datasets	../example.py	/^from sklearn import datasets$/;"	kind:namespace	line:1
 description	../setup.py	/^    description=DESCRIPTION,$/;"	kind:variable	line:44
 dill	../ScoreCardModel\mixins\serialize_mixin.py	/^import dill$/;"	kind:namespace	line:9
-discretization.py	../ScoreCardModel\discretization.py	1;"	kind:file	line:1
+discretization.py	../ScoreCardModel\binning\discretization.py	1;"	kind:file	line:1
 drawks	../ScoreCardModel\score_card.py	/^    def drawks(self, X, y):$/;"	kind:member	line:275
 dumps	../ScoreCardModel\mixins\serialize_mixin.py	/^    def dumps(self):$/;"	kind:member	line:17
 epub_author	../document\conf.py	/^epub_author = author$/;"	kind:variable	line:69
@@ -121,7 +121,7 @@ master_doc	../document\conf.py	/^master_doc = 'index'$/;"	kind:variable	line:24
 matplotlib	../ScoreCardModel\score_card.py	/^        import matplotlib.pyplot as plt$/;"	kind:namespace	line:212
 meta.py	../ScoreCardModel\models\meta.py	1;"	kind:file	line:1
 name	../setup.py	/^    name=PROJECTNAME,$/;"	kind:variable	line:42
-np	../ScoreCardModel\discretization.py	/^import numpy as np$/;"	kind:namespace	line:18
+np	../ScoreCardModel\binning\discretization.py	/^import numpy as np$/;"	kind:namespace	line:18
 np	../ScoreCardModel\models\logistic_regression_model.py	/^        import numpy as np$/;"	kind:namespace	line:111
 np	../ScoreCardModel\score_card.py	/^import numpy as np$/;"	kind:namespace	line:50
 np	../ScoreCardModel\weight_of_evidence.py	/^import numpy as np$/;"	kind:namespace	line:66
@@ -131,7 +131,7 @@ os	../document\conf.py	/^import os$/;"	kind:namespace	line:2
 p	../document\conf.py	/^p = Path(__file__).absolute()$/;"	kind:variable	line:8
 packages	../setup.py	/^    packages=PACKAGES,$/;"	kind:variable	line:52
 path	../setup.py	/^from os import path$/;"	kind:namespace	line:3
-pd	../ScoreCardModel\discretization.py	/^import pandas as pd$/;"	kind:namespace	line:19
+pd	../ScoreCardModel\binning\discretization.py	/^import pandas as pd$/;"	kind:namespace	line:19
 pd	../ScoreCardModel\score_card.py	/^import pandas as pd$/;"	kind:namespace	line:51
 pd	../example.py	/^import pandas as pd$/;"	kind:namespace	line:2
 plt	../ScoreCardModel\score_card.py	/^        import matplotlib.pyplot as plt$/;"	kind:namespace	line:212
@@ -173,12 +173,12 @@ todo_include_todos	../document\conf.py	/^todo_include_todos = True$/;"	kind:vari
 todo_include_todos	../document\conf.py	/^todo_include_todos = True$/;"	kind:variable	line:75
 train	../ScoreCardModel\models\meta.py	/^    def train(self, dataset, target, *, test_size=0.3, random_state=0, **kwargs):$/;"	kind:member	line:41
 train_test_split	../ScoreCardModel\models\meta.py	/^        from sklearn.model_selection import train_test_split$/;"	kind:namespace	line:53
-transform	../ScoreCardModel\discretization.py	/^    def transform(self, x):$/;"	kind:member	line:34
+transform	../ScoreCardModel\binning\discretization.py	/^    def transform(self, x):$/;"	kind:member	line:34
 transform	../ScoreCardModel\weight_of_evidence.py	/^    def transform(self, X):$/;"	kind:member	line:143
 type_of_target	../ScoreCardModel\weight_of_evidence.py	/^from sklearn.utils.multiclass import type_of_target$/;"	kind:namespace	line:67
 url	../setup.py	/^    url=URL,$/;"	kind:variable	line:46
 url_doc_root	../document\conf.py	/^url_doc_root = "xxxx"#$/;"	kind:variable	line:76
-version	../document\conf.py	/^version = '1.0.4'$/;"	kind:variable	line:30
+version	../document\conf.py	/^version = '1.0.5'$/;"	kind:variable	line:30
 version	../setup.py	/^    version=VERSION,$/;"	kind:variable	line:43
 weight_of_evidence.py	../ScoreCardModel\weight_of_evidence.py	1;"	kind:file	line:1
 y	../example.py	/^y = iris.target$/;"	kind:variable	line:46

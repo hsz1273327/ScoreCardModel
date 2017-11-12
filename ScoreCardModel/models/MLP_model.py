@@ -1,7 +1,7 @@
-"""logistic回归模型
+"""多层感知器模型(神经网络)
 =========================
 
-基础分类器,广泛应用在工业领域.
+最简单基础的神经网络分类器模型,神经网络当然不光可以用来做二分类,但是评分卡要的就是二分类.
 
 
 用法
@@ -9,6 +9,8 @@
 
 由于数据进来格式千奇百怪,这个模型最好的用法是继承后重写
 `predict`,`pre_trade`,`pre_trade_batch`这几个方法,适当的也可以重写`train`方法.
+
+不过一般来说神经网络不要求分箱.
 
 
 .. code:: python
@@ -56,7 +58,7 @@ from .meta import Model
 from ..mixins.serialize_mixin import SerializeMixin
 
 
-class LogisticRegressionModel(Model, SerializeMixin):
+class MLPModel(Model, SerializeMixin):
     """该类最好是继承了使用,继承后重写`predict`和`pre_trade`
 
     Attributes:
@@ -141,7 +143,7 @@ class LogisticRegressionModel(Model, SerializeMixin):
 
 
         """
-        from sklearn.linear_model import LogisticRegression
-        model = LogisticRegression(**kwargs)
+        from sklearn.neural_network import MLPClassifier
+        model = MLPClassifier(**kwargs)
         model.fit(X_matrix, y)
         return model
