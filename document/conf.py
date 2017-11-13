@@ -27,7 +27,7 @@ project = 'ScoreCardModel'
 copyright = '2017, 87'
 author = '87'
 
-version = '1.1.0'
+version = '1.1.1'
 
 release = ''
 
