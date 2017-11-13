@@ -92,7 +92,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.discretization</span> <span class="k">import</span> <span class="n">Discretization</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.weight_of_evidence</span> <span class="k">import</span> <span class="n">WeightOfEvidence</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.models.logistic_regression_model</span> <span class="k">import</span> <span class="n">LogisticRegressionModel</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.score_card</span> <span class="k">import</span> <span class="n">ScoreCardModel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ScoreCardModel.binning.score_card</span> <span class="k">import</span> <span class="n">ScoreCardModel</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyLR</span><span class="p">(</span><span class="n">LogisticRegressionModel</span><span class="p">):</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
@@ -192,67 +192,16 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-ScoreCardModel.discretization">
-<span id="scorecardmodel-discretization-module"></span><h2>ScoreCardModel.discretization module<a class="headerlink" href="#module-ScoreCardModel.discretization" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id7">
-<h3>离散化连续数据<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
-<p>我们使用pandas来对连续数据做离散化处理.其接口尽量与sklearn的数据预处理模块接近.</p>
-<div class="section" id="id8">
-<h4>使用方法:<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Discretization</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.5</span><span class="p">,</span><span class="mf">2.5</span><span class="p">,</span><span class="mf">3.5</span><span class="p">]))</span>
-<span class="go">[&#39;(0, 2]&#39;, &#39;(0, 2]&#39;, &#39;(2, 4]&#39;, &#39;(2, 4]&#39;]</span>
-</pre></div>
-</div>
-<dl class="class">
-<dt id="ScoreCardModel.discretization.Discretization">
-<em class="property">class </em><code class="descclassname">ScoreCardModel.discretization.</code><code class="descname">Discretization</code><span class="sig-paren">(</span><em>bins</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/discretization.html#Discretization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.discretization.Discretization" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>离散化连续数据.需要实例化以保存bins状态.</p>
-<dl class="attribute">
-<dt id="ScoreCardModel.discretization.Discretization.bins">
-<code class="descname">bins</code><a class="headerlink" href="#ScoreCardModel.discretization.Discretization.bins" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Sequence</em> –</p>
-<ul class="simple">
-<li>用于分段的列表,第一位为下限,最后一位为上限</li>
-</ul>
-</dd></dl>
-
-<dl class="method">
-<dt id="ScoreCardModel.discretization.Discretization.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/discretization.html#Discretization.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.discretization.Discretization.transform" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>Sequence</em>) – <ul class="simple">
-<li>用于分段的序列</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li>以分段字符串为枚举内容的numpy序列</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-</div>
+<div class="section" id="scorecardmodel-discretization-module">
+<h2>ScoreCardModel.discretization module<a class="headerlink" href="#scorecardmodel-discretization-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-ScoreCardModel.score_card">
 <span id="scorecardmodel-score-card-module"></span><h2>ScoreCardModel.score_card module<a class="headerlink" href="#module-ScoreCardModel.score_card" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id9">
-<h3>评分卡<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id7">
+<h3>评分卡<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <p>用于二分类问题通过模型预测的概率来计算得分</p>
-<div class="section" id="id10">
-<h4>计算公式:<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id8">
+<h4>计算公式:<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
 <div class="math">
 \[factor = {\frac {p} {log(2)}}\]</div>
 <div class="math">
@@ -262,8 +211,8 @@
 <div class="math">
 \[score = factor \cdot {log(odds)} + offset\]</div>
 </div>
-<div class="section" id="id11">
-<h4>使用方法:<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id9">
+<h4>使用方法:<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span> <span class="o">=</span> <span class="n">ScoreCardModel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">pre_trade</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 </pre></div>
@@ -712,8 +661,8 @@
 广义上讲,woe可以算是一种编码方式.
 如何计算这些权重呢?这就得训练.我们需要一组二值代表签数据,
 通过统计离散特征不同枚举值对目标数据的响应情况来计算触发概率,</p>
-<div class="section" id="id12">
-<h4>触发概率<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id10">
+<h4>触发概率<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
 <p>本模型针对二分类问题,事件也就是只有True,False两种.我们当然认为True,枚举值i的触发概率可以这样计算,
 比如某个枚举值i对true的触发概率,就是所有i值时是true的数量除以总的t的数量</p>
 <div class="math">
@@ -721,8 +670,8 @@
 <div class="math">
 \[p_t = {\frac {t_i} {t_{total}}}\]</div>
 </div>
-<div class="section" id="id13">
-<h4>woe<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id11">
+<h4>woe<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
 <p>woe就是计算正负概率的信息值</p>
 <div class="math">
 \[woe_i = log_2({\frac {p_f} {p_t}})\]</div>
@@ -735,8 +684,8 @@
 <div class="math">
 \[IV = \sum_{k=0}^n IV_i\]</div>
 </div>
-<div class="section" id="id14">
-<h4>使用方法:<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id12">
+<h4>使用方法:<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">datasets</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">iris</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
@@ -871,17 +820,11 @@
 </li>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-ScoreCardModel.discretization">ScoreCardModel.discretization module</a><ul>
-<li><a class="reference internal" href="#id7">离散化连续数据</a><ul>
-<li><a class="reference internal" href="#id8">使用方法:</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#scorecardmodel-discretization-module">ScoreCardModel.discretization module</a></li>
 <li><a class="reference internal" href="#module-ScoreCardModel.score_card">ScoreCardModel.score_card module</a><ul>
-<li><a class="reference internal" href="#id9">评分卡</a><ul>
-<li><a class="reference internal" href="#id10">计算公式:</a></li>
-<li><a class="reference internal" href="#id11">使用方法:</a></li>
+<li><a class="reference internal" href="#id7">评分卡</a><ul>
+<li><a class="reference internal" href="#id8">计算公式:</a></li>
+<li><a class="reference internal" href="#id9">使用方法:</a></li>
 <li><a class="reference internal" href="#ks">KS 曲线:</a></li>
 </ul>
 </li>
@@ -889,10 +832,10 @@
 </li>
 <li><a class="reference internal" href="#module-ScoreCardModel.weight_of_evidence">ScoreCardModel.weight_of_evidence module</a><ul>
 <li><a class="reference internal" href="#woe">计算Woe</a><ul>
-<li><a class="reference internal" href="#id12">触发概率</a></li>
-<li><a class="reference internal" href="#id13">woe</a></li>
+<li><a class="reference internal" href="#id10">触发概率</a></li>
+<li><a class="reference internal" href="#id11">woe</a></li>
 <li><a class="reference internal" href="#iv">iv</a></li>
-<li><a class="reference internal" href="#id14">使用方法:</a></li>
+<li><a class="reference internal" href="#id12">使用方法:</a></li>
 </ul>
 </li>
 </ul>

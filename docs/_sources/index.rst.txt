@@ -6,7 +6,7 @@
 Welcome to ScoreCardModel's documentation!
 ==========================================
 
-* version: 1.0.3
+* version: 1.1.0
 
 * status: dev
 
@@ -27,19 +27,16 @@ Feature
 ----------------------
 
 * Serializable
+* mutil classifier model support
+* ks-curve support
 
-change
----------------------
-
-* Discretization object now use str as the key instead of numpy's str
-* ScoreCardModel now have a different usecase
 
 Example
 -------------------------------
 
 >>> from sklearn import datasets
 >>> import pandas as pd
->>> from ScoreCardModel.discretization import Discretization
+>>> from ScoreCardModel.binning.discretization import Discretization
 >>> from ScoreCardModel.weight_of_evidence import WeightOfEvidence
 >>> from ScoreCardModel.models.logistic_regression_model import LogisticRegressionModel
 >>> from ScoreCardModel.score_card import ScoreCardModel

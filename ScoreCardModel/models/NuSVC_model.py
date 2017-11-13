@@ -11,48 +11,65 @@ nu-svc中nu的范围是0到1，nu是错分样本所占比例的上界，支持�
 由于数据进来格式千奇百怪,这个模型最好的用法是继承后重写
 `predict`,`pre_trade`,`pre_trade_batch`这几个方法,适当的也可以重写`train`方法.
 
-不过一般来说神经网络不要求分箱.
 
 
 .. code:: python
 
-    class MyLR(LogisticRegressionModel):
+    class MySvc(NuSVCModel):
         def predict(self, x):
             x = self.pre_trade(x)
+            print(x)
             return self._predict_proba(x)
 
         def pre_trade(self, x):
+            x_ ={k+"__"+l:u for k,v in x.items() for l,u in v.items()}
+            print("***********x_")
             import numpy as np
             result = []
-            for i, v in x.items():
-                t = self.ds[i].transform([v])[0]
-                r = self.woes[i].transform([t])[0]
+            for f in self.feature_order:
+                t =  str(self.ds[f].transform([x_.get(f)])[0])
+                r = self.woes[f].transform([t])[0]
                 result.append(r)
+            print(np.array(result))
             return np.array(result)
-        def _pre_trade_batch_row(self,row,Y,bins):
+        
+        def _predict_proba(self, x):
+            print("*********** _predict_proba")
+            print(x)
+            return self._model.predict_proba(x)
+
+
+        def _pre_trade_batch_row(self, row, Y, bins):
             d = Discretization(bins)
             d_row = d.transform(row)
             woe = WeightOfEvidence()
-            woe.fit(d_row,Y)
-            return d,woe,woe.transform(d_row)
-        
-        def pre_trade_batch(self, X,Y):
+            woe.fit(d_row, Y)
+            return d, woe, woe.transform(d_row)
+
+        def pre_trade_batch(self, X, Y):
             self.ds = {}
             self.woes = {}
             self.table = {}
-            self.ds["sepal length (cm)"],self.woes["sepal length (cm)"],self.table["sepal length (cm)"]= self._pre_trade_batch_row(
-                X["sepal length (cm)"],Y,[0,2,5,8])
-            self.ds['sepal width (cm)'],self.woes['sepal width (cm)'],self.table['sepal width (cm)'] = self._pre_trade_batch_row(
-                X['sepal width (cm)'],Y,[0,2,2.5,3,3.5,5])
-            self.ds['petal length (cm)'],self.woes['petal length (cm)'],self.table['petal length (cm)'] = self._pre_trade_batch_row(
-                X['petal length (cm)'],Y,[0,1,2,3,4,5,7])
-            self.ds['petal width (cm)'],self.woes['petal width (cm)'],self.table['petal width (cm)'] = self._pre_trade_batch_row(
-                X['petal width (cm)'],Y,[0,1,2,3])
+            cols = {
+                'mobile_operators_juxinli_report__contact_region':[-1,8,10,20,27,100],
+                'mobile_operators_juxinli_report__phone_gray_score':[-1,15,42,68,82,100000],
+                'mobile_operators_juxinli_report__contacts_class2_blacklist_cnt':[-1,218,654,1000000],
+                'mobile_operators_juxinli_report__contacts_class1_cnt':[-1,34,67,100,133,199,1000000],
+                'mobile_operators_juxinli_report__contacts_router_cnt':[-1,26,52,78,1000000],
+                'basic_info__age':[-1,21,24,27,29,32,35,37,40,43,100],
+                'mobile_basic__call_time':[-1,680,1250,2394,2966,999999],
+                'addressbook_validate__counts':[-1,577,1152,1000000],
+                'call_records_feature__max_place_rate':[-0.1,0.5,0.95,1.0],
+                'mobile_basic__sustained_days':[-1,150,174,300]
+            }
+            for i,bins in cols.items():
+                self.ds[i], self.woes[i], self.table[i] = self._pre_trade_batch_row(
+                    X[i], Y, bins)
             return pd.DataFrame(self.table)
 
-    lr = MyLR()
-    lr.train(l,z)
-    lr.predict(l.loc[0].to_dict())
+    model = MySvc()
+    model.train(l,z)
+    model.predict(l.loc[0].to_dict())
 """
 
 from .meta import Model

@@ -6,7 +6,7 @@
 Welcome to ScoreCardModel's documentation!
 ==========================================
 
-* version: 1.0.3
+* version: 1.1.0
 
 * status: dev
 
@@ -27,12 +27,9 @@ Feature
 ----------------------
 
 * Serializable
+* mutil classifier model support
+* ks-curve support
 
-change
----------------------
-
-* Discretization object now use str as the key instead of numpy's str
-* ScoreCardModel now have a different usecase
 
 Example
 -------------------------------
