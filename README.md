@@ -1,7 +1,7 @@
 
 # ScoreCardModel
 
-+ version: 1.0.5
++ version: 1.1.0
 + status: dev
 + author: hsz
 + email: hsz1273327@gmail.com
@@ -16,11 +16,9 @@ keywords:math,finance
 ## Feature
 
 + Serializable
++ mutil classifier model support
++ ks-curve support
 
-## change
-
-+ Discretization object now use str as the key instead of numpy's str
-+ ScoreCardModel now have a different usecase
 
 ## Example
 
