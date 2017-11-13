@@ -96,7 +96,7 @@ class WeightOfEvidence:
         """
         if type_of_target(tag) not in ['binary']:
             raise AttributeError("tag must be a binary array")
-        if type_of_target(tag) in ['continuous']:
+        if type_of_target(x) in ['continuous']:
             raise AttributeError("input array must not continuous")
         tag = np.array(tag)
         x = np.array(x)
