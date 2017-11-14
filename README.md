@@ -1,7 +1,7 @@
 
 # ScoreCardModel
 
-+ version: 1.1.1
++ version: 1.1.2
 + status: dev
 + author: hsz
 + email: hsz1273327@gmail.com
@@ -18,6 +18,10 @@ keywords:math,finance
 + Serializable
 + mutil classifier model support
 + ks-curve support
+
+## Change
+
++ scorecard now can set a threshold value to return a bool result
 
 
 ## Example
