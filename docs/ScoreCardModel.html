@@ -242,7 +242,7 @@
 
 <dl class="class">
 <dt id="ScoreCardModel.score_card.ScoreCardModel">
-<em class="property">class </em><code class="descclassname">ScoreCardModel.score_card.</code><code class="descname">ScoreCardModel</code><span class="sig-paren">(</span><em>model</em>, <em>b=100</em>, <em>o=1</em>, <em>p=20</em>, <em>round_=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ScoreCardModel.score_card.</code><code class="descname">ScoreCardModel</code><span class="sig-paren">(</span><em>model</em>, <em>b=100</em>, <em>o=1</em>, <em>p=20</em>, <em>round_=1</em>, <em>threshold=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ScoreCardModel.mixins.html#ScoreCardModel.mixins.serialize_mixin.SerializeMixin" title="ScoreCardModel.mixins.serialize_mixin.SerializeMixin"><code class="xref py py-class docutils literal"><span class="pre">ScoreCardModel.mixins.serialize_mixin.SerializeMixin</span></code></a></p>
 <p>本模型需要使用一个已经训练好的分类器来初始化,预测,计算评分也都是依赖于它.</p>
 <dl class="attribute">
@@ -290,6 +290,15 @@
 </ul>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="ScoreCardModel.score_card.ScoreCardModel.threshold">
+<code class="descname">threshold</code><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardModel.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> –</p>
+<ul class="simple">
+<li>阈值,可选</li>
+</ul>
+</dd></dl>
+
 <dl class="method">
 <dt id="ScoreCardModel.score_card.ScoreCardModel.pre_trade">
 <code class="descname">pre_trade</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardModel.pre_trade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardModel.pre_trade" title="Permalink to this definition">¶</a></dt>
@@ -312,6 +321,7 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
 <li>预测出来的分数</li>
 </ul>
+<p>bool: - 预测的分数超过阈值则返回True,否则False</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
@@ -324,7 +334,7 @@
 
 <dl class="class">
 <dt id="ScoreCardModel.score_card.ScoreCardWithKSModel">
-<em class="property">class </em><code class="descclassname">ScoreCardModel.score_card.</code><code class="descname">ScoreCardWithKSModel</code><span class="sig-paren">(</span><em>model</em>, <em>b=100</em>, <em>o=1</em>, <em>p=20</em>, <em>round_=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardWithKSModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ScoreCardModel.score_card.</code><code class="descname">ScoreCardWithKSModel</code><span class="sig-paren">(</span><em>model</em>, <em>b=100</em>, <em>o=1</em>, <em>p=20</em>, <em>round_=1</em>, <em>threshold=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ScoreCardModel/score_card.html#ScoreCardWithKSModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ScoreCardModel.score_card.ScoreCardWithKSModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ScoreCardModel.score_card.ScoreCardModel" title="ScoreCardModel.score_card.ScoreCardModel"><code class="xref py py-class docutils literal"><span class="pre">ScoreCardModel.score_card.ScoreCardModel</span></code></a></p>
 <p>本模型需要使用一个已经训练好的分类器来初始化.预测,计算评分也都是依赖于它.
 它是ScoreCardModel的子类,并且可以用ScoreCardModel或者它的子类实例化.

@@ -65,14 +65,16 @@ class ScoreCardModel(SerializeMixin):
         o (int): - 用于计算偏置量
         p (int): - 用于计算偏置量和因数项
         round_ (int): - 精度
+        threshold (float): - 阈值,可选
 
     """
 
-    def __init__(self, model, b=100, o=1, p=20, round_=1):
+    def __init__(self, model, b=100, o=1, p=20, round_=1,threshold=None):
         self._model = model
         self.b = b
         self.o = o
         self.p = p
+        self.threshold = threshold
         self.round_ = round_
 
     def pre_trade(self, x):
@@ -89,6 +91,7 @@ class ScoreCardModel(SerializeMixin):
         Returns:
 
             float: - 预测出来的分数
+            bool: - 预测的分数超过阈值则返回True,否则False
 
         """
         proba = self._model._predict_proba([x])
@@ -96,7 +99,11 @@ class ScoreCardModel(SerializeMixin):
         offset = self.b - self.p * (np.log(self.o) / np.log(2))
         p_f, p_t = proba[0]
         odds = p_t / p_f
-        return round(factor * np.log(odds) + offset, self.round_)
+        score = round(factor * np.log(odds) + offset, self.round_)
+        if self.threshold:
+            return True if score > self.threshold else False
+        else:
+            return score
 
 
 class KS:

@@ -107,14 +107,16 @@
 <span class="sd">        o (int): - 用于计算偏置量</span>
 <span class="sd">        p (int): - 用于计算偏置量和因数项</span>
 <span class="sd">        round_ (int): - 精度</span>
+<span class="sd">        threshold (float): - 阈值,可选</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">round_</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">o</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">round_</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">b</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">o</span> <span class="o">=</span> <span class="n">o</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">round_</span> <span class="o">=</span> <span class="n">round_</span>
 
 <div class="viewcode-block" id="ScoreCardModel.pre_trade"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.ScoreCardModel.pre_trade">[docs]</a>    <span class="k">def</span> <span class="nf">pre_trade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
@@ -131,6 +133,7 @@
 <span class="sd">        Returns:</span>
 
 <span class="sd">            float: - 预测出来的分数</span>
+<span class="sd">            bool: - 预测的分数超过阈值则返回True,否则False</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">proba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_predict_proba</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
@@ -138,7 +141,11 @@
         <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
         <span class="n">p_f</span><span class="p">,</span> <span class="n">p_t</span> <span class="o">=</span> <span class="n">proba</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">odds</span> <span class="o">=</span> <span class="n">p_t</span> <span class="o">/</span> <span class="n">p_f</span>
-        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">odds</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">round_</span><span class="p">)</span></div></div>
+        <span class="n">score</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">odds</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">round_</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">score</span></div></div>
 
 
 <div class="viewcode-block" id="KS"><a class="viewcode-back" href="../../ScoreCardModel.html#ScoreCardModel.score_card.KS">[docs]</a><span class="k">class</span> <span class="nc">KS</span><span class="p">:</span>

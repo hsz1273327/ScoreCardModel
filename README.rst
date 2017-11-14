@@ -2,7 +2,7 @@
 ScoreCardModel
 ===============================
 
-* version: 1.1.1
+* version: 1.1.2
 
 * status: dev
 
@@ -26,6 +26,10 @@ Feature
 * mutil classifier model support
 * ks-curve support
 
+Change
+-------------------------
+
+* scorecard now can set a threshold value to return a bool result
 
 Example
 -------------------------------
