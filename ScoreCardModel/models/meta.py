@@ -2,6 +2,7 @@
 
 """
 import abc
+import numpy as np
 
 
 class Model(abc.ABC):
@@ -9,6 +10,46 @@ class Model(abc.ABC):
     """
     _model = None
     feature_order = None
+
+    def _predict(self, x):
+        """二分类预测
+
+        Parameters:
+
+            x (Sequence): - 用于预测的特征向量
+
+        Returns:
+
+            bool: - 返回0,1也就是False/True,True表示预测值为True,否则说明预测值为False
+
+
+        """
+        x = np.array(x)
+        if len(x.shape) == 1:
+            x = x.reshape(1, -1)
+        result = self._model.predict(x)
+        return result
+
+    def _predict_proba(self, x):
+        """
+        不同预测值的概率
+
+        Parameters:
+
+            x (Sequence): - 用于预测的特征向量
+
+        Returns:
+
+            float: - 预测值为False的概率
+            float: - 预测值为True的概率
+
+
+        """
+        x = np.array(x)
+        if len(x.shape) == 1:
+            x = x.reshape(1, -1)
+        result = self._model.predict_proba(x)
+        return result
 
     @abc.abstractmethod
     def predict(self, x):

@@ -69,42 +69,9 @@ class LogisticRegressionModel(Model, SerializeMixin):
     feature_order = None
     _model = None
 
-    def _predict(self, x):
-        """二分类预测
-
-        Parameters:
-
-            x (Sequence): - 用于预测的特征向量
-
-        Returns:
-
-            bool: - 返回0,1也就是False/True,True表示预测值为True,否则说明预测值为False
-
-
-        """
-        result = self._model.predict(x)
-        return result
-
     def predict(self, x):
         """预测用的接口,根据需求重写实现"""
         return self._predict(x)
-
-    def _predict_proba(self, x):
-        """
-        不同预测值的概率
-
-        Parameters:
-
-            x (Sequence): - 用于预测的特征向量
-
-        Returns:
-
-            float: - 预测值为False的概率
-            float: - 预测值为True的概率
-
-
-        """
-        return self._model.predict_proba(x)
 
     def pre_trade(self, x):
         """"数据预处理,预测的时候由于输入未必是处理好的,因此需要先做下预处理"""
