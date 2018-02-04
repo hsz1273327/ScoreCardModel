@@ -138,8 +138,6 @@ class LogisticRegressionModel(Model, SerializeMixin):
         Returns:
 
             sklearn.model: - sklearn的模型
-
-
         """
         from sklearn.linear_model import LogisticRegression
         model = LogisticRegression(**kwargs)
